@@ -20,6 +20,25 @@ package RADA is
    pragma Pack (Byte_Array_Type);
    for Byte_Array_Type'Size use 8;
 
+   type Double_Bit_Array_Type is array (0 .. 1) of Boolean;
+   pragma Pack (Double_Bit_Array_Type);
+   for Double_Bit_Array_Type'Size use 2;
+
+   --+--------------------------------------------------------------------------
+   --| Spare Types
+   --+--------------------------------------------------------------------------
+
+   type Spare_Bit_Type is new Boolean;
+   for Spare_Bit_Type'Size use 1;
+
+   type Spare_2_Bit_Array_Type is array (0 .. 1) of Spare_Bit_Type;
+   pragma Pack (Spare_2_Bit_Array_Type);
+   for Spare_2_Bit_Array_Type'Size use 2;
+
+   type Spare_5_Bit_Array_Type is array (0 .. 4) of Spare_Bit_Type;
+   pragma Pack (Spare_5_Bit_Array_Type);
+   for Spare_5_Bit_Array_Type'Size use 5;
+
    --+--------------------------------------------------------------------------
    --| The AUXIRQ  register is used to check any pending interrupts which may be
    --| asserted by the three Auxiliary sub blocks.
@@ -118,39 +137,129 @@ package RADA is
    pragma Pack (Mini_Uart_Interrupt_Enable_Type);
    for Mini_Uart_Interrupt_Enable_Type'Size use 8;
 
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_IIR_REG register shows the interrupt status. It also has two
+   --| FIFO enable status bits and (when w riting) FIFO clear bits.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Interrupt_Identify_Type is
+      record
+         -- This bit is clear whenever an interrupt is pending. Read. Reset
+         -- on 1.
+         Interrupt_Pending : Boolean;
+         -- Read/Write.
+         -- On read this register shows the interrupt ID bits:
+         -- * 00 : No interrupts
+         -- * 01 : Transmit holding register empty
+         -- * 10 : Receiver holds valid byte
+         -- * 11 : <Not possible>
+         -- On write:
+         -- * Writing with bit 1 set will clear the receive FIFO.
+         -- * Writing with bit 2 set will clear the transmit FIFO
+         Read_Interrupt_Id_Or_Write_FIFO_Clear_Bits : Double_Bit_Array_Type;
+         -- Always read as zero as the mini UART has no timeout function. Read.
+         Spare_3 : Spare_Bit_Type;
+         -- Always read as zero. Read.
+         Spare_4_5 : Spare_2_Bit_Array_Type;
+         -- Both bits always read as 1 as the FIFOs are always enabled. Read.
+         FIFO_Enables : Double_Bit_Array_Type;
+      end record;
+   pragma Pack (Mini_Uart_Interrupt_Identify_Type);
+   for Mini_Uart_Interrupt_Identify_Type'Size use 8;
+
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_LCR_REG register controls the line data format and gives
+   --| access to the baudrate register.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Line_Control_Type is
+      record
+         -- If clear the UART works in 7-bit mode. If set the UART works in
+         -- 8-bit mode. Read/Write.
+         Data_Size : Boolean;
+         -- Reserved, write zero, read as don't care. Some of these bits have
+         -- functions in a 16550 compatible UART but are ignored here.
+         Spare : Spare_5_Bit_Array_Type;
+         -- If set high the UART1_TX line is pulled low continuously. If held
+         -- for at least 12 bits times that will indicate a break condition.
+         -- Read/Write.
+         Break : Boolean;
+         -- If set the first to Mini UART register give access the the Baudrate
+         -- register. During operation this bit must be cleared.
+         DLAB_Access : Boolean;
+      end record;
+   pragma Pack (Mini_Uart_Line_Control_Type);
+   for Mini_Uart_Line_Control_Type'Size use 8;
+
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_MCR_REG register controls the 'modem' signals.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Modem_Control_Type is
+      record
+         -- Reserved, write zero, read as don't care. This bit has a function
+         -- in a 16550 compatible UART but is ignored here;
+         Spare_0 : Spare_Bit_Type;
+         -- If clear the UART1_RTS line is high. If set the UART1_RTS line is
+         -- low. This bit is ignored if the RTS is used for auto-flow control.
+         -- See the Mini Uart Extra Control register description.
+         RTS : Boolean;
+         -- Reserved, write zero, read as don't care. Some of these bits have
+         -- functions in a 16550 compatible UART but are ignored here.
+         Spare_2_7 : Spare_5_Bit_Array_Type;
+      end record;
+   pragma Pack (Mini_Uart_Modem_Control_Type);
+   for Mini_Uart_Modem_Control_Type'Size use 8;
+
    type Auxiliary_Peripherals_Register_Map_Type is
       record
          AUX_IRQ            : Auxiliary_Interrupt_Status_Type;
          AUX_ENABLES        : Auxiliary_Enables_Type;
          AUX_MU_IO_REG      : Mini_Uart_IO_Data_Type;
          AUX_MU_IER_REG     : Mini_Uart_Interrupt_Enable_Type;
-         --           AUX_MU_IIR_REG     : Mini_Uart_Interrupt_Identify_Type;
-         --           AUX_MU_LCR_REG     : Mini_Uart_Line_Control_Type;
-         --           AUX_MU_MCR_REG     : Mini_Uart_Modem_Control_Type;
-         --           AUX_MU_LSR_REG     : Mini_Uart_Line_Status_Type;
-         --           AUX_MU_MSR_REG     : Mini_Uart_Modem_Status_Type;
-         --           AUX_MU_SCRATCH     : Mini_Uart_Scratch_Type;
-         --           AUX_MU_CNTL_REG    : Mini_Uart_Extra_Control_Type;
-         --           AUX_MU_STAT_REG    : Mini_Uart_Extra_Status_Type;
-         --           AUX_MU_BAUD_REG    : Mini_Uart_Baud_Rate;
-         --           AUX_SPI0_CNTL0_REG : SPI_1_Control_Register_0;
-         --           AUX_SPI0_CNTL1_REG : SPI_1_Control_Register_1;
-         --           AUX_SPI0_STAT_REG  : SPI_1_Status;
-         --           AUX_SPI0_IO_REG    : SPI_1_Data;
-         --           AUX_SPI0_PEEK_REG  : SPI_1_Peek;
-         --           AUX_SPI1_CNTL0_REG : SPI_2_Control_Register_0;
-         --           AUX_SPI1_CNTL1_REG : SPI_2_Control_Register_1;
-         --           AUX_SPI0_STAT_REG  : SPI_2_Status;
-         --           AUX_SPI0_IO_REG    : SPI_2_Data;
-         --           AUX_SPI0_PEEK_REG  : SPI_2_Peek;
+         AUX_MU_IIR_REG     : Mini_Uart_Interrupt_Identify_Type;
+         AUX_MU_LCR_REG     : Mini_Uart_Line_Control_Type;
+         AUX_MU_MCR_REG     : Mini_Uart_Modem_Control_Type;
+         AUX_MU_LSR_REG     : Mini_Uart_Line_Status_Type;
+         AUX_MU_MSR_REG     : Mini_Uart_Modem_Status_Type;
+         AUX_MU_SCRATCH     : Mini_Uart_Scratch_Type;
+         AUX_MU_CNTL_REG    : Mini_Uart_Extra_Control_Type;
+         AUX_MU_STAT_REG    : Mini_Uart_Extra_Status_Type;
+         AUX_MU_BAUD_REG    : Mini_Uart_Baud_Rate;
+         AUX_SPI0_CNTL0_REG : SPI_1_Control_Register_0;
+         AUX_SPI0_CNTL1_REG : SPI_1_Control_Register_1;
+         AUX_SPI0_STAT_REG  : SPI_1_Status;
+         AUX_SPI0_IO_REG    : SPI_1_Data;
+         AUX_SPI0_PEEK_REG  : SPI_1_Peek;
+         AUX_SPI1_CNTL0_REG : SPI_2_Control_Register_0;
+         AUX_SPI1_CNTL1_REG : SPI_2_Control_Register_1;
+         AUX_SPI0_STAT_REG  : SPI_2_Status;
+         AUX_SPI0_IO_REG    : SPI_2_Data;
+         AUX_SPI0_PEEK_REG  : SPI_2_Peek;
       end record;
 
    for Auxiliary_Peripherals_Register_Map_Type use
       record
-         AUX_IRQ        at 00 range 00 .. 02;
-         AUX_ENABLES    at 04 range 00 .. 02;
-         AUX_MU_IO_REG  at 40 range 00 .. 07;
-         AUX_MU_IER_REG at 44 range 00 .. 07;
+         AUX_IRQ            at 16#00# range 00 .. 02;
+         AUX_ENABLES        at 16#04# range 00 .. 02;
+         AUX_MU_IO_REG      at 16#40# range 00 .. 07;
+         AUX_MU_IER_REG     at 16#44# range 00 .. 07;
+         AUX_MU_IIR_REG     at 16#48# range 00 .. 07;
+         AUX_MU_LCR_REG     at 16#4C# range 00 .. 07;
+         AUX_MU_MCR_REG     at 16#50# range 00 .. 07;
+         AUX_MU_LSR_REG     at 16#54# range 00 .. 07;
+         AUX_MU_MSR_REG     at 16#58# range 00 .. 07;
+         AUX_MU_SCRATCH     at 16#5C# range 00 .. 07;
+         AUX_MU_CNTL_REG    at 16#60# range 00 .. 07;
+         AUX_MU_STAT_REG    at 16#64# range 00 .. 31;
+         AUX_MU_BAUD_REG    at 16#68# range 00 .. 15;
+         AUX_SPI0_CNTL0_REG at 16#80# range 00 .. 31;
+         AUX_SPI0_CNTL1_REG at 16#84# range 00 .. 07;
+         AUX_SPI0_STAT_REG  at 16#88# range 00 .. 31;
+         AUX_SPI0_IO_REG    at 16#90# range 00 .. 31;
+         AUX_SPI0_PEEK_REG  at 16#94# range 00 .. 15;
+         AUX_SPI1_CNTL0_REG at 16#C0# range 00 .. 31;
+         AUX_SPI1_CNTL1_REG at 16#C4# range 00 .. 07;
+         AUX_SPI0_STAT_REG  at 16#C8# range 00 .. 31;
+         AUX_SPI0_IO_REG    at 16#D0# range 00 .. 31;
+         AUX_SPI0_PEEK_REG  at 16#D4# range 00 .. 15;
       end record;
 
 private
