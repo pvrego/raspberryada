@@ -10,7 +10,7 @@ project Raspberryada is
    end Ide;
 
    package Compiler is
-      for Default_Switches ("ada") use ("-gnatVaimoprstfec", "-gnatw.e", "-gnat12", "-gnatyaBfhiIklnpruxobt");
+      for Default_Switches ("ada") use ("-gnatVaimoprstfec", "-gnatw.e", "-gnat12", "-gnatyaBfhiIklnpruxobtd");
    end Compiler;
 
 end Raspberryada;
