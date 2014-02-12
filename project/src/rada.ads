@@ -20,9 +20,13 @@ package RADA is
    pragma Pack (Byte_Array_Type);
    for Byte_Array_Type'Size use 8;
 
-   type Double_Bit_Array_Type is array (0 .. 1) of Boolean;
-   pragma Pack (Double_Bit_Array_Type);
-   for Double_Bit_Array_Type'Size use 2;
+   type Bit_Array_2_Type is array (0 .. 1) of Boolean;
+   pragma Pack (Bit_Array_2_Type);
+   for Bit_Array_2_Type'Size use 2;
+
+   type Bit_Array_4_Type is array (0 .. 3) of Boolean;
+   pragma Pack (Bit_Array_4_Type);
+   for Bit_Array_4_Type'Size use 4;
 
    --+--------------------------------------------------------------------------
    --| Spare Types
@@ -35,9 +39,21 @@ package RADA is
    pragma Pack (Spare_2_Bit_Array_Type);
    for Spare_2_Bit_Array_Type'Size use 2;
 
+   type Spare_3_Bit_Array_Type is array (0 .. 2) of Spare_Bit_Type;
+   pragma Pack (Spare_3_Bit_Array_Type);
+   for Spare_3_Bit_Array_Type'Size use 3;
+
+   type Spare_4_Bit_Array_Type is array (0 .. 3) of Spare_Bit_Type;
+   pragma Pack (Spare_4_Bit_Array_Type);
+   for Spare_4_Bit_Array_Type'Size use 4;
+
    type Spare_5_Bit_Array_Type is array (0 .. 4) of Spare_Bit_Type;
    pragma Pack (Spare_5_Bit_Array_Type);
    for Spare_5_Bit_Array_Type'Size use 5;
+
+   type Spare_6_Bit_Array_Type is array (0 .. 5) of Spare_Bit_Type;
+   pragma Pack (Spare_6_Bit_Array_Type);
+   for Spare_6_Bit_Array_Type'Size use 6;
 
    --+--------------------------------------------------------------------------
    --| The AUXIRQ  register is used to check any pending interrupts which may be
@@ -155,13 +171,13 @@ package RADA is
          -- On write:
          -- * Writing with bit 1 set will clear the receive FIFO.
          -- * Writing with bit 2 set will clear the transmit FIFO
-         Read_Interrupt_Id_Or_Write_FIFO_Clear_Bits : Double_Bit_Array_Type;
+         Read_Interrupt_Id_Or_Write_FIFO_Clear_Bits : Bit_Array_2_Type;
          -- Always read as zero as the mini UART has no timeout function. Read.
          Spare_3 : Spare_Bit_Type;
          -- Always read as zero. Read.
          Spare_4_5 : Spare_2_Bit_Array_Type;
          -- Both bits always read as 1 as the FIFOs are always enabled. Read.
-         FIFO_Enables : Double_Bit_Array_Type;
+         FIFO_Enables : Bit_Array_2_Type;
       end record;
    pragma Pack (Mini_Uart_Interrupt_Identify_Type);
    for Mini_Uart_Interrupt_Identify_Type'Size use 8;
@@ -208,6 +224,158 @@ package RADA is
    pragma Pack (Mini_Uart_Modem_Control_Type);
    for Mini_Uart_Modem_Control_Type'Size use 8;
 
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_LSR_REG register shows the data status.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Line_Status_Type is
+      record
+         -- This bit is set if the receive FIFO holds at least 1 symbol. Read.
+         Data_Ready : Boolean;
+         -- This bit is set if there was a receiver overrun. That is: one or
+         -- more characters arrived whilst the receive FIFO was full. The newly
+         -- arrived characters have been discarded. This bit is cleared each
+         -- time this register is read. To do a non-destructive read of this
+         -- overrun bit use the Mini Uart Extra Status register. Read/Clear.
+         Receiver_Outrun : Boolean;
+         -- Reserved, write zero, read as don't care. Some of these bits have
+         -- functions in a 16550 compatible UART but are ignored here.
+         Spare_2_4 : Spare_3_Bit_Array_Type;
+         -- This bit is set if the transmit FIFO can accept at least one byte.
+         -- Read.
+         Transmitter_Empty : Boolean;
+         -- This bit is set if the transmit FIFO is empty and the transmitter
+         -- is idle. (Finished shifting out the last bit). Read.
+         Transmitter_Iddle : Boolean;
+         -- Reserved, write zero, read as don't care. This bit has a function
+         -- in a 16550 compatible UART but is ignored here.
+         Spare_7 : Spare_Bit_Type;
+      end record;
+   pragma Pack (Mini_Uart_Line_Status_Type);
+   for Mini_Uart_Line_Status_Type'Size use 8;
+
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_MSR_REG register shows the 'modem' status.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Modem_Status_Type is
+      record
+         -- Reserved, write zero, read as don't care. Some of these bits have
+         -- functions in a 16550 compatible UART but are ignored here.
+         Spare_0_3 : Spare_4_Bit_Array_Type;
+         -- This bit is the inverse of the UART1_CTS input. Thus:
+         -- * If set the UART1_CTS pin is low
+         -- * If clear the UART1_CTS pin is high
+         CTS_Status : Boolean;
+         -- Reserved, write zero, read as don't care. Some of these bits have
+         -- functions in a 16550 compatible UART but are ignored here.
+         Spare_6_7 : Spare_2_Bit_Array_Type;
+      end record;
+   pragma Pack (Mini_Uart_Modem_Status_Type);
+
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_SCRATCH is a single byte storage.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Scratch_Type is
+      record
+         -- One whole byte extra on top of the 134217728 provided by the SDC.
+         -- Read/Write.
+         Scratch : Byte_Array_Type;
+      end record;
+   pragma Pack (Mini_Uart_Scratch_Type);
+   for Mini_Uart_Scratch_Type'Size use 8;
+
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_CNTL_REG provides access to some extra useful and nice
+   --| features not found on a normal 16550 UART.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Extra_Control_Type is
+      record
+         -- If this bit is set the mini UART receiver is enabled. If this bit is
+         -- clear the mini UART receiver is disabled. Read/Write.
+         Receiver_Enable : Boolean;
+         -- If this bit is set the mini UART transmitter is enabled. If this bit
+         -- is clear the mini UART transmitter is disabled. Read/Write.
+         Transmitter_Enable : Boolean;
+         -- If this bit is set the RTS line will de-assert if the receive FIFO
+         -- reaches its 'auto flow' level. In fact the RTS line will behave as
+         -- an RTR (Ready To Receive) line. If this bit is clear the RTS line is
+         -- controlled by the AUX_MU_MCR_REG register bit 1. Read/Write.
+         Enable_Receive_Auto_Flowcontrol_Using_RTS : Boolean;
+         -- If this bit is set the transmitter will stop if the CTS line is
+         -- de-asserted. If this bit is clear the transmitter will ignore the
+         -- status of the CTS line. Read/Write.
+         Enable_Transmit_Auto_Flowcontrol_Using_CTS : Boolean;
+         -- These two bits specify at what receiver FIFO level the RTS line is
+         -- de-asserted in auto-flow mode:
+         -- * 00 : De-assert RTS when the receive FIFO has 3 empty spaces left.
+         -- * 01 : De-assert RTS when the receive FIFO has 2 empty spaces left.
+         -- * 10 : De-assert RTS when the receive FIFO has 1 empty space left.
+         -- * 11 : De-assert RTS when the receive FIFO has 4 empty spaces left.
+         -- Read/Write.
+         RTS_Auto_Flow_Level : Bit_Array_2_Type;
+         -- This bit allows one to invert the RTS auto flow operation polarity.
+         -- If set the RTS auto flow assert level is low. If clear the RTS auto
+         -- flow assert level is high. Read/Write.
+         RTS_Assert_Level : Boolean;
+         -- This bit allows one to invert the CTS auto flow operation polarity.
+         -- If set the CTS auto flow assert level is low. If clear the CTS auto
+         -- flow assert level is high.
+         CTS_Assert_Level : Boolean;
+      end record;
+   pragma Pack (Mini_Uart_Extra_Control_Type);
+   for Mini_Uart_Extra_Control_Type'Size use 8;
+
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_STAT_REG provides a lot of useful information about the
+   --| internal status of the mini UART not found on a normal 16550 UART.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Extra_Status_Type is
+      record
+         -- If this bit is set the mini UART receive FIFO contains at least 1
+         -- symbol. If this bit is clear the mini UART receiver FIFO is empty.
+         -- Read.
+         Symbol_Available : Boolean;
+         -- If this bit is set the mini UART transmitter FIFO can accept at
+         -- least one more symbol. If this bit is clear the mini UART
+         -- transmitter FIFO is full. Read.
+         Space_Available : Boolean;
+         -- If this bit is set the receiver is idle. If this bit is clear the
+         -- receiver is busy. This bit can change unless the receiver is
+         -- disabled. Read.
+         Receiver_Is_Idle : Boolean;
+         -- If this bit is set the transmitter is idle. If this bit is clear the
+         -- transmitter is idle. Read.
+         Transmitter_Is_Idle : Boolean;
+         -- This bit is set if there was a receiver overrun. That is: one or
+         -- more characters arrived whilst the receive FIFO was full. The newly
+         -- arrived characters have been discarded. This bit is cleared each
+         -- time the AUX_MU_LSR_REG register is read. Read.
+         Receiver_Overrun : Boolean;
+         -- This is the inverse of bit 1 (Space_Available). Read.
+         Transmit_FIFO_Is_Full : Boolean;
+         -- This bit shows the status of the UART1_RTS line. Read.
+         RTS_Status : Boolean;
+         -- This bit shows the status of the UART1_CTS line. Read.
+         CTS_Status : Boolean;
+         -- If this bit is set the transmitter FIFO is empty. Thus it can accept
+         -- 8 symbols. Read.
+         Transmit_FIFO_Is_Empty : Boolean;
+         -- This bit is set if the transmitter is idle and the transmit FIFO is
+         -- empty. It is a logic AND of bits 2 and 8. Read.
+         Transmitter_Done : Boolean;
+         -- Reserved, write zero, read as don't care.
+         Spare_10_15 : Spare_6_Bit_Array_Type;
+         -- These bits shows how many symbols are stored in the receive FIFO.
+         -- The value is in the range 0-8. Read.
+         Receive_FIFO_Fill_Level : Bit_Array_4_Type;
+         -- Reserved, write zero, read as don't care.
+         Spare_20_23 : Spare_4_Bit_Array_Type;
+         -- These bits shows how many symbols are stored in the transmit FIFO.
+         -- The value is in the range 0-8. Read.
+         Transmit_FIFO_Fill_Level : Bit_Array_4_Type;
+      end record;
+   pragma Pack (Mini_Uart_Extra_Status_Type);
+   for Mini_Uart_Extra_Status_Type'Size use 32;
+
    type Auxiliary_Peripherals_Register_Map_Type is
       record
          AUX_IRQ            : Auxiliary_Interrupt_Status_Type;
@@ -230,9 +398,9 @@ package RADA is
          AUX_SPI0_PEEK_REG  : SPI_1_Peek;
          AUX_SPI1_CNTL0_REG : SPI_2_Control_Register_0;
          AUX_SPI1_CNTL1_REG : SPI_2_Control_Register_1;
-         AUX_SPI0_STAT_REG  : SPI_2_Status;
-         AUX_SPI0_IO_REG    : SPI_2_Data;
-         AUX_SPI0_PEEK_REG  : SPI_2_Peek;
+         AUX_SPI1_STAT_REG  : SPI_2_Status;
+         AUX_SPI1_IO_REG    : SPI_2_Data;
+         AUX_SPI1_PEEK_REG  : SPI_2_Peek;
       end record;
 
    for Auxiliary_Peripherals_Register_Map_Type use
@@ -257,9 +425,9 @@ package RADA is
          AUX_SPI0_PEEK_REG  at 16#94# range 00 .. 15;
          AUX_SPI1_CNTL0_REG at 16#C0# range 00 .. 31;
          AUX_SPI1_CNTL1_REG at 16#C4# range 00 .. 07;
-         AUX_SPI0_STAT_REG  at 16#C8# range 00 .. 31;
-         AUX_SPI0_IO_REG    at 16#D0# range 00 .. 31;
-         AUX_SPI0_PEEK_REG  at 16#D4# range 00 .. 15;
+         AUX_SPI1_STAT_REG  at 16#C8# range 00 .. 31;
+         AUX_SPI1_IO_REG    at 16#D0# range 00 .. 31;
+         AUX_SPI1_PEEK_REG  at 16#D4# range 00 .. 15;
       end record;
 
 private
