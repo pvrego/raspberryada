@@ -42,8 +42,3 @@ Each block is a chapter of the BCM2835 datasheet.
   
 * project: folder where are configured the GPS project file, sources and structure for build.
 
-environment for develoment
---------------------------
-
-environment for userland
-------------------------
