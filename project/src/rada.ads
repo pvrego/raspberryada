@@ -7,18 +7,24 @@ package RADA is
    --| Constants
    --+--------------------------------------------------------------------------
 
-   BYTE_SIZE : constant := 8;
+   SIZE_BYTE  : constant := 8;
+   SIZE_WORD  : constant := 16;
+   SIZE_DWORD : constant := 32;
 
    --+--------------------------------------------------------------------------
    --| General Purpose Types
    --+--------------------------------------------------------------------------
 
    type Byte_Type is new Interfaces.Unsigned_8;
-   for Byte_Type'Size use BYTE_SIZE;
+   for Byte_Type'Size use SIZE_BYTE;
 
    type Byte_Array_Type is array (0 .. 7) of Boolean;
    pragma Pack (Byte_Array_Type);
-   for Byte_Array_Type'Size use 8;
+   for Byte_Array_Type'Size use SIZE_BYTE;
+
+   type Word_Array_Type is array (0 .. 15) of Boolean;
+   pragma Pack (Word_Array_Type);
+   for Word_Array_Type'Size use SIZE_WORD;
 
    type Bit_Array_2_Type is array (0 .. 1) of Boolean;
    pragma Pack (Bit_Array_2_Type);
@@ -27,6 +33,20 @@ package RADA is
    type Bit_Array_4_Type is array (0 .. 3) of Boolean;
    pragma Pack (Bit_Array_4_Type);
    for Bit_Array_4_Type'Size use 4;
+
+   type Bit_Array_6_Type is array (0 .. 5) of Boolean;
+   pragma Pack (Bit_Array_6_Type);
+   for Bit_Array_6_Type'Size use 6;
+
+   type Bit_Array_12_Type is array (0 .. 11) of Boolean;
+   pragma Pack (Bit_Array_12_Type);
+   for Bit_Array_12_Type'Size use 12;
+
+   type Unsigned_6 is mod 2 ** 6;
+   for Unsigned_6'Size use 6;
+
+   type Unsigned_12 is mod 2 ** 12;
+   for Unsigned_12'Size use 12;
 
    --+--------------------------------------------------------------------------
    --| Spare Types
@@ -54,6 +74,10 @@ package RADA is
    type Spare_6_Bit_Array_Type is array (0 .. 5) of Spare_Bit_Type;
    pragma Pack (Spare_6_Bit_Array_Type);
    for Spare_6_Bit_Array_Type'Size use 6;
+
+   type Spare_7_Bit_Array_Type is array (0 .. 6) of Spare_Bit_Type;
+   pragma Pack (Spare_7_Bit_Array_Type);
+   for Spare_7_Bit_Array_Type'Size use 7;
 
    --+--------------------------------------------------------------------------
    --| The AUXIRQ  register is used to check any pending interrupts which may be
@@ -120,7 +144,7 @@ package RADA is
          Data : Byte_Array_Type;
       end record;
    pragma Pack (Mini_Uart_IO_Data_Type);
-   for Mini_Uart_IO_Data_Type'Size use BYTE_SIZE;
+   for Mini_Uart_IO_Data_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_IER_REG register is primary used to enable interrupts.
@@ -151,7 +175,7 @@ package RADA is
          Data : Byte_Array_Type;
       end record;
    pragma Pack (Mini_Uart_Interrupt_Enable_Type);
-   for Mini_Uart_Interrupt_Enable_Type'Size use 8;
+   for Mini_Uart_Interrupt_Enable_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_IIR_REG register shows the interrupt status. It also has two
@@ -180,7 +204,7 @@ package RADA is
          FIFO_Enables : Bit_Array_2_Type;
       end record;
    pragma Pack (Mini_Uart_Interrupt_Identify_Type);
-   for Mini_Uart_Interrupt_Identify_Type'Size use 8;
+   for Mini_Uart_Interrupt_Identify_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_LCR_REG register controls the line data format and gives
@@ -203,7 +227,7 @@ package RADA is
          DLAB_Access : Boolean;
       end record;
    pragma Pack (Mini_Uart_Line_Control_Type);
-   for Mini_Uart_Line_Control_Type'Size use 8;
+   for Mini_Uart_Line_Control_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_MCR_REG register controls the 'modem' signals.
@@ -222,7 +246,7 @@ package RADA is
          Spare_2_7 : Spare_5_Bit_Array_Type;
       end record;
    pragma Pack (Mini_Uart_Modem_Control_Type);
-   for Mini_Uart_Modem_Control_Type'Size use 8;
+   for Mini_Uart_Modem_Control_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_LSR_REG register shows the data status.
@@ -245,13 +269,13 @@ package RADA is
          Transmitter_Empty : Boolean;
          -- This bit is set if the transmit FIFO is empty and the transmitter
          -- is idle. (Finished shifting out the last bit). Read.
-         Transmitter_Iddle : Boolean;
+         Transmitter_Idle : Boolean;
          -- Reserved, write zero, read as don't care. This bit has a function
          -- in a 16550 compatible UART but is ignored here.
          Spare_7 : Spare_Bit_Type;
       end record;
    pragma Pack (Mini_Uart_Line_Status_Type);
-   for Mini_Uart_Line_Status_Type'Size use 8;
+   for Mini_Uart_Line_Status_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_MSR_REG register shows the 'modem' status.
@@ -281,7 +305,7 @@ package RADA is
          Scratch : Byte_Array_Type;
       end record;
    pragma Pack (Mini_Uart_Scratch_Type);
-   for Mini_Uart_Scratch_Type'Size use 8;
+   for Mini_Uart_Scratch_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_CNTL_REG provides access to some extra useful and nice
@@ -322,7 +346,7 @@ package RADA is
          CTS_Assert_Level : Boolean;
       end record;
    pragma Pack (Mini_Uart_Extra_Control_Type);
-   for Mini_Uart_Extra_Control_Type'Size use 8;
+   for Mini_Uart_Extra_Control_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_STAT_REG provides a lot of useful information about the
@@ -374,7 +398,142 @@ package RADA is
          Transmit_FIFO_Fill_Level : Bit_Array_4_Type;
       end record;
    pragma Pack (Mini_Uart_Extra_Status_Type);
-   for Mini_Uart_Extra_Status_Type'Size use 32;
+   for Mini_Uart_Extra_Status_Type'Size use SIZE_DWORD;
+
+   --+--------------------------------------------------------------------------
+   --| The AUX_MU_BAUD register allows direct access to the 16-bit wide baudrate
+   --| counter. This is the same register as is accessed using the LABD bit and
+   --| the first two register, but much easier to access.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Baud_Rate is
+      record
+         -- Mini UART baudrate counter. Read/Write.
+         Baud_Rate : Word_Array_Type;
+      end record;
+   pragma Pack (Mini_Uart_Baud_Rate);
+   for Mini_Uart_Baud_Rate'Size use SIZE_WORD;
+
+   --+--------------------------------------------------------------------------
+   --| The AUXSPIx_CNTL0 register control many features of the SPI interfaces.
+   --+--------------------------------------------------------------------------
+   type SPI_Control_Register_0_Type is
+      record
+         -- Specifies the number of bits to shift. This field is ignored when
+         -- using 'variable shift' mode. Read/Write.
+         Shift_Length : Bit_Array_6_Type;
+         -- If 1 the data is shifted out starting with the MS bit (bit 15 or
+         -- bit 11). If 0 the data is shifted out starting with the LS bit
+         -- (bit 0). Read/Write.
+         Shift_Out_MS_Bit_First : Boolean;
+         -- If 1 the 'idle' clock line state is high. If 0 the 'idle' clock line
+         -- state is low. Read/Write.
+         Invert_SPI_CLK : Boolean;
+         -- If 1 data is clocked out on the rising edge of the SPI clock. If 0
+         -- data is clocked out on the falling edge of the SPI clock.
+         -- Read/Write.
+         Out_Rising : Boolean;
+         -- If 1 the receive and transmit FIFOs are held in reset (and thus
+         -- flushed). This bit should be 0 during normal operation. Read/Write.
+         Clear_FIFOs : Boolean;
+         -- If 1 data is clocked in on the rising edge of the SPI clock. If 0
+         -- data is clocked in on the falling edge of the SPI clock. Read/Write.
+         In_Rising : Boolean;
+         -- Enables the SPI interface. Whilst disabled the FIFOs can still be
+         -- written to or read from. This bit should be 1 during normal
+         -- operation. Read/Write.
+         Enable : Boolean;
+         -- Controls the extra DOUT hold time in system clock cycles.
+         -- * 00 : No extra hold time
+         -- * 01 : 1 system clock extra hold time
+         -- * 10 : 4 system clocks extra hold time
+         -- * 11 : 7 system clocks extra hold time
+         -- Read/Write.
+         DOUT_Hold_Time : Bit_Array_2_Type;
+         -- If 1 the SPI takes the shift length and the data from the TX fifo.
+         -- If 0 the SPI takes the shift length from bits 0-5 of this register.
+         -- Read/Write.
+         Variable_Width : Boolean;
+         -- If 1 the SPI takes the CS pattern and the data from the TX fifo.
+         -- If 0 the SPI takes the CS pattern from bits 17-19 of this register.
+         -- Set this bit only if also bit 14 (variable width) is set.
+         -- Read/Write.
+         Variable_CS : Boolean;
+         -- If set the SPI input works in post input mode.
+         Post_Input_Mode : Boolean;
+         -- The pattern output on the CS pins when active. Read/Write.
+         Chip_Selects : Bit_Array_2_Type;
+         -- Sets the SPI clock speed. spi clk freq =
+         -- system_clock_freq/2*(speed+1). Read/Write.
+         Speed : Bit_Array_12_Type;
+      end record;
+   pragma Pack (SPI_Control_Register_0_Type);
+   for SPI_Control_Register_0_Type'Size use SIZE_DWORD;
+
+   --+--------------------------------------------------------------------------
+   --| The AUXSPIx_CNTL1 registers control more features of the SPI interfaces.
+   --+--------------------------------------------------------------------------
+   type SPI_Control_Register_1_Type is
+      record
+         -- If 1 the receiver shift register is NOT cleared. Thus new data is
+         -- concatenated to old data. If 0 the receiver shift register is
+         -- cleared before each transaction. Read/Write.
+         Keep_Input : Boolean;
+         -- If 1 the data is shifted in starting with the MS bit. (bit 15). If 0
+         -- the data is shifted in starting with the LS bit. (bit 0).
+         -- Read/Write.
+         Shift_In_MS_First : Boolean;
+         -- Reserved, write zero, read as don't care.
+         Spare_2_5 : Spare_4_Bit_Array_Type;
+         -- If 1 the interrupt line is high when the interface is idle.
+         -- Read/Write.
+         Done_IRQ : Boolean;
+         -- If 1 the interrupt line is high when the transmit FIFO is empty.
+         -- Read/Write.
+         TX_Empty_IRQ : Boolean;
+         -- Additional SPI clock cycles where the CS is high. Read/Write.
+         CS_High_Time : Boolean;
+      end record;
+   pragma Pack (SPI_Control_Register_1_Type);
+   for SPI_Control_Register_1_Type'Size use 11;
+
+   --+--------------------------------------------------------------------------
+   --| The AUXSPIx_STAT registers show the status of the SPI interfaces.
+   --+--------------------------------------------------------------------------
+   type SPI_Status_Type is
+      record
+         -- The number of bits still to be processed. Starts with 'shift-length'
+         -- and counts down. Read/Write.
+         Bit_Count : Bit_Array_6_Type;
+         -- Indicates the module is busy transferring data. Read/Write.
+         Busy : Boolean;
+         -- If 1 the receiver FIFO is empty. If 0 the receiver FIFO holds at
+         -- least 1 data unit. Read/Write.
+         RX_Empty : Boolean;
+         -- If 1 the transmit FIFO is empty. If 0 the transmit FIFO holds at
+         -- least 1 data unit. Read/Write.
+         TX_Empty : Boolean;
+         -- If 1 the transmit FIFO is full. If 0 the transmit FIFO can accept at
+         -- least 1 data unit. Read/Write.
+         TX_Full : Boolean;
+         -- Reserved, write zero, read as don't care.
+         Spare_5_11 : Spare_6_Bit_Array_Type;
+         -- The number of data units in the receive data FIFO. Read/Write.
+         RX_FIFO_Level : Unsigned_12;
+         -- The number of data units in the transmit data FIFO. Read/Write.
+         TX_FIFO_Level : Interfaces.Unsigned_8;
+      end record;
+      pragma Pack (SPI_Status_Type);
+      for SPI_Status_Type'Size use SIZE_DWORD;
+
+   --+--------------------------------------------------------------------------
+   --| The AUXSPIx_PEEK registers show received data of the SPI interfaces.
+   --+--------------------------------------------------------------------------
+   type SPI_Peek_Type is
+      record
+         Data : Word_Array_Type;
+      end record;
+   pragma Pack (SPI_Peek_Type);
+   for SPI_Peek_Type'Size use SIZE_WORD;
 
    type Auxiliary_Peripherals_Register_Map_Type is
       record
@@ -391,16 +550,16 @@ package RADA is
          AUX_MU_CNTL_REG    : Mini_Uart_Extra_Control_Type;
          AUX_MU_STAT_REG    : Mini_Uart_Extra_Status_Type;
          AUX_MU_BAUD_REG    : Mini_Uart_Baud_Rate;
-         AUX_SPI0_CNTL0_REG : SPI_1_Control_Register_0;
-         AUX_SPI0_CNTL1_REG : SPI_1_Control_Register_1;
-         AUX_SPI0_STAT_REG  : SPI_1_Status;
-         AUX_SPI0_IO_REG    : SPI_1_Data;
-         AUX_SPI0_PEEK_REG  : SPI_1_Peek;
-         AUX_SPI1_CNTL0_REG : SPI_2_Control_Register_0;
-         AUX_SPI1_CNTL1_REG : SPI_2_Control_Register_1;
-         AUX_SPI1_STAT_REG  : SPI_2_Status;
-         AUX_SPI1_IO_REG    : SPI_2_Data;
-         AUX_SPI1_PEEK_REG  : SPI_2_Peek;
+         AUX_SPI0_CNTL0_REG : SPI_Control_Register_0_Type;
+         AUX_SPI0_CNTL1_REG : SPI_Control_Register_1_Type;
+         AUX_SPI0_STAT_REG  : SPI_Status_Type;
+         AUX_SPI0_PEEK_REG  : SPI_Peek_Type;
+         AUX_SPI0_IO_REG    : SPI_1_Data_Type;
+         AUX_SPI1_CNTL0_REG : SPI_Control_Register_0_Type;
+         AUX_SPI1_CNTL1_REG : SPI_Control_Register_1_Type;
+         AUX_SPI1_STAT_REG  : SPI_Status_Type;
+         AUX_SPI1_PEEK_REG  : SPI_Peek_Type;
+         AUX_SPI1_IO_REG    : SPI_2_Data_Type;
       end record;
 
    for Auxiliary_Peripherals_Register_Map_Type use
@@ -421,13 +580,13 @@ package RADA is
          AUX_SPI0_CNTL0_REG at 16#80# range 00 .. 31;
          AUX_SPI0_CNTL1_REG at 16#84# range 00 .. 07;
          AUX_SPI0_STAT_REG  at 16#88# range 00 .. 31;
+         AUX_SPI0_PEEK_REG  at 16#8C# range 00 .. 15;
          AUX_SPI0_IO_REG    at 16#90# range 00 .. 31;
-         AUX_SPI0_PEEK_REG  at 16#94# range 00 .. 15;
          AUX_SPI1_CNTL0_REG at 16#C0# range 00 .. 31;
          AUX_SPI1_CNTL1_REG at 16#C4# range 00 .. 07;
          AUX_SPI1_STAT_REG  at 16#C8# range 00 .. 31;
-         AUX_SPI1_IO_REG    at 16#D0# range 00 .. 31;
          AUX_SPI1_PEEK_REG  at 16#D4# range 00 .. 15;
+         AUX_SPI1_IO_REG    at 16#D0# range 00 .. 31;
       end record;
 
 private
