@@ -11,8 +11,8 @@ The project is based on mapping from Broadcom BCM2835 datasheet for ARM Peripher
 
 Each block is a chapter of the BCM2835 datasheet. 
 
-- **Auxiliaries: UART1 & SPI1, SPI2 : Under development**.
-- BSC : Future development.
+- Auxiliaries: UART1 & SPI1, SPI2 : Implemented.
+- **BSC : Under development**.
 - DMA Controller : Future development.
 - External Mass Media Controller : Future development.
 - General Purpose I/O (GPIO) : Future development.
@@ -34,7 +34,8 @@ Each block is a chapter of the BCM2835 datasheet.
 	|   |-- bin
 	|   |-- src
 	|   |   |-- main.adb
-	|   |   `-- rada.ads
+	|   |   |-- raspberryada.ads
+	|   |   `-- raspberryada-aux_uart_spi.ads
 	|   |-- obj
 	|   `-- raspberryada.gpr
 	|-- LICENSE
