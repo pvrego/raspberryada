@@ -147,6 +147,35 @@ package RADA is
    for Mini_Uart_IO_Data_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
+   --| The AUX_MU_IIR_REG register shows the interrupt status. It also has two
+   --| FIFO enable status bits and (when w riting) FIFO clear bits.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Interrupt_Identify_Type is
+      record
+         -- This bit is clear whenever an interrupt is pending. Read. Reset
+         -- on 1.
+         Interrupt_Pending : Boolean;
+         -- Read/Write.
+         -- On read this register shows the interrupt ID bits:
+         -- * 00 : No interrupts
+         -- * 01 : Transmit holding register empty
+         -- * 10 : Receiver holds valid byte
+         -- * 11 : <Not possible>
+         -- On write:
+         -- * Writing with bit 1 set will clear the receive FIFO.
+         -- * Writing with bit 2 set will clear the transmit FIFO
+         Read_Interrupt_Id_Or_Write_FIFO_Clear_Bits : Bit_Array_2_Type;
+         -- Always read as zero as the mini UART has no timeout function. Read.
+         Spare_3 : Spare_Bit_Type;
+         -- Always read as zero. Read.
+         Spare_4_5 : Spare_2_Bit_Array_Type;
+         -- Both bits always read as 1 as the FIFOs are always enabled. Read.
+         FIFO_Enables : Bit_Array_2_Type;
+      end record;
+   pragma Pack (Mini_Uart_Interrupt_Identify_Type);
+   for Mini_Uart_Interrupt_Identify_Type'Size use SIZE_BYTE;
+
+   --+--------------------------------------------------------------------------
    --| The AUX_MU_IER_REG register is primary used to enable interrupts.
    --| If the DLAB bit in the line control register is set this register gives
    --| access to the MS 8 bits of the baud rate.
@@ -176,35 +205,6 @@ package RADA is
       end record;
    pragma Pack (Mini_Uart_Interrupt_Enable_Type);
    for Mini_Uart_Interrupt_Enable_Type'Size use SIZE_BYTE;
-
-   --+--------------------------------------------------------------------------
-   --| The AUX_MU_IIR_REG register shows the interrupt status. It also has two
-   --| FIFO enable status bits and (when w riting) FIFO clear bits.
-   --+--------------------------------------------------------------------------
-   type Mini_Uart_Interrupt_Identify_Type is
-      record
-         -- This bit is clear whenever an interrupt is pending. Read. Reset
-         -- on 1.
-         Interrupt_Pending : Boolean;
-         -- Read/Write.
-         -- On read this register shows the interrupt ID bits:
-         -- * 00 : No interrupts
-         -- * 01 : Transmit holding register empty
-         -- * 10 : Receiver holds valid byte
-         -- * 11 : <Not possible>
-         -- On write:
-         -- * Writing with bit 1 set will clear the receive FIFO.
-         -- * Writing with bit 2 set will clear the transmit FIFO
-         Read_Interrupt_Id_Or_Write_FIFO_Clear_Bits : Bit_Array_2_Type;
-         -- Always read as zero as the mini UART has no timeout function. Read.
-         Spare_3 : Spare_Bit_Type;
-         -- Always read as zero. Read.
-         Spare_4_5 : Spare_2_Bit_Array_Type;
-         -- Both bits always read as 1 as the FIFOs are always enabled. Read.
-         FIFO_Enables : Bit_Array_2_Type;
-      end record;
-   pragma Pack (Mini_Uart_Interrupt_Identify_Type);
-   for Mini_Uart_Interrupt_Identify_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_LCR_REG register controls the line data format and gives
@@ -501,22 +501,24 @@ package RADA is
    --+--------------------------------------------------------------------------
    type SPI_Status_Type is
       record
-         -- The number of bits still to be processed. Starts with 'shift-length'
-         -- and counts down. Read/Write.
-         Bit_Count : Bit_Array_6_Type;
-         -- Indicates the module is busy transferring data. Read/Write.
-         Busy : Boolean;
-         -- If 1 the receiver FIFO is empty. If 0 the receiver FIFO holds at
-         -- least 1 data unit. Read/Write.
-         RX_Empty : Boolean;
-         -- If 1 the transmit FIFO is empty. If 0 the transmit FIFO holds at
-         -- least 1 data unit. Read/Write.
-         TX_Empty : Boolean;
-         -- If 1 the transmit FIFO is full. If 0 the transmit FIFO can accept at
-         -- least 1 data unit. Read/Write.
-         TX_Full : Boolean;
-         -- Reserved, write zero, read as don't care.
-         Spare_5_11 : Spare_6_Bit_Array_Type;
+         -- If Bit 6 (Busy) is high, it means:
+         -- * Bits 0:5 : Bit_Count : The number of bits still to be processed.
+         --   Starts with 'shift-length' and counts down. Read/Write.
+         -- * Bit 6 : Busy : Indicates the module is busy transferring data.
+         --   Read/Write.
+         -- * Bits 7:11 : Reserved, write zero, read as don't care.
+         --
+         -- If Bit 6 is low (not busy), it means:
+         -- * Bit 2 : RX_Empty : If 1 the receiver FIFO is empty. If 0 the
+         --   receiver FIFO holds at least 1 data unit. Read/Write.
+         -- * Bit 3 : TX_Empty : If 1 the transmit FIFO is empty. If 0 the
+         --   transmit FIFO holds at least 1 data unit. Read/Write.
+         -- * Bit 4 : TX_Full : If 1 the transmit FIFO is full. If 0 the
+         --   transmit FIFO can accept at least 1 data unit. Read/Write.
+         -- * Bit 6 : Busy : Indicates the module is busy transferring data.
+         --   Read/Write.
+         -- * Bits 5,7:11: Reserved, write zero, read as don't care.
+         Bit_Count_Or_Status : Bit_Array_12_Type;
          -- The number of data units in the receive data FIFO. Read/Write.
          RX_FIFO_Level : Unsigned_12;
          -- The number of data units in the transmit data FIFO. Read/Write.
@@ -524,6 +526,20 @@ package RADA is
       end record;
       pragma Pack (SPI_Status_Type);
       for SPI_Status_Type'Size use SIZE_DWORD;
+
+   --+--------------------------------------------------------------------------
+   --| The AUXSPIx_IO registers are the primary data port of the SPI interfaces.
+   --| These four addresses all write to the same FIFO.
+   --+--------------------------------------------------------------------------
+   type SPI_Data_Type is
+      record
+         -- Writes to this address range end up in the transmit FIFO. Data is
+         -- lost when writing whilst the transmit FIFO is full. Reads from this
+         -- address will take the top entry from the receive FIFO. Reading
+         -- whilst the receive FIFO is will return the last data received.
+         -- Read/Write.
+         Data : Word_Array_Type;
+      end record;
 
    --+--------------------------------------------------------------------------
    --| The AUXSPIx_PEEK registers show received data of the SPI interfaces.
@@ -540,8 +556,8 @@ package RADA is
          AUX_IRQ            : Auxiliary_Interrupt_Status_Type;
          AUX_ENABLES        : Auxiliary_Enables_Type;
          AUX_MU_IO_REG      : Mini_Uart_IO_Data_Type;
-         AUX_MU_IER_REG     : Mini_Uart_Interrupt_Enable_Type;
          AUX_MU_IIR_REG     : Mini_Uart_Interrupt_Identify_Type;
+         AUX_MU_IER_REG     : Mini_Uart_Interrupt_Enable_Type;
          AUX_MU_LCR_REG     : Mini_Uart_Line_Control_Type;
          AUX_MU_MCR_REG     : Mini_Uart_Modem_Control_Type;
          AUX_MU_LSR_REG     : Mini_Uart_Line_Status_Type;
@@ -554,12 +570,12 @@ package RADA is
          AUX_SPI0_CNTL1_REG : SPI_Control_Register_1_Type;
          AUX_SPI0_STAT_REG  : SPI_Status_Type;
          AUX_SPI0_PEEK_REG  : SPI_Peek_Type;
-         AUX_SPI0_IO_REG    : SPI_1_Data_Type;
+         AUX_SPI0_IO_REG    : SPI_Data_Type;
          AUX_SPI1_CNTL0_REG : SPI_Control_Register_0_Type;
          AUX_SPI1_CNTL1_REG : SPI_Control_Register_1_Type;
          AUX_SPI1_STAT_REG  : SPI_Status_Type;
          AUX_SPI1_PEEK_REG  : SPI_Peek_Type;
-         AUX_SPI1_IO_REG    : SPI_2_Data_Type;
+         AUX_SPI1_IO_REG    : SPI_Data_Type;
       end record;
 
    for Auxiliary_Peripherals_Register_Map_Type use
@@ -567,8 +583,8 @@ package RADA is
          AUX_IRQ            at 16#00# range 00 .. 02;
          AUX_ENABLES        at 16#04# range 00 .. 02;
          AUX_MU_IO_REG      at 16#40# range 00 .. 07;
-         AUX_MU_IER_REG     at 16#44# range 00 .. 07;
-         AUX_MU_IIR_REG     at 16#48# range 00 .. 07;
+         AUX_MU_IIR_REG     at 16#44# range 00 .. 07;
+         AUX_MU_IER_REG     at 16#48# range 00 .. 07;
          AUX_MU_LCR_REG     at 16#4C# range 00 .. 07;
          AUX_MU_MCR_REG     at 16#50# range 00 .. 07;
          AUX_MU_LSR_REG     at 16#54# range 00 .. 07;
@@ -578,15 +594,16 @@ package RADA is
          AUX_MU_STAT_REG    at 16#64# range 00 .. 31;
          AUX_MU_BAUD_REG    at 16#68# range 00 .. 15;
          AUX_SPI0_CNTL0_REG at 16#80# range 00 .. 31;
-         AUX_SPI0_CNTL1_REG at 16#84# range 00 .. 07;
+         AUX_SPI0_CNTL1_REG at 16#84# range 00 .. 10;
          AUX_SPI0_STAT_REG  at 16#88# range 00 .. 31;
          AUX_SPI0_PEEK_REG  at 16#8C# range 00 .. 15;
-         AUX_SPI0_IO_REG    at 16#90# range 00 .. 31;
+         AUX_SPI0_IO_REG    at 16#A0# range 00 .. 31;
          AUX_SPI1_CNTL0_REG at 16#C0# range 00 .. 31;
-         AUX_SPI1_CNTL1_REG at 16#C4# range 00 .. 07;
+         AUX_SPI1_CNTL1_REG at 16#C4# range 00 .. 10;
          AUX_SPI1_STAT_REG  at 16#C8# range 00 .. 31;
-         AUX_SPI1_PEEK_REG  at 16#D4# range 00 .. 15;
-         AUX_SPI1_IO_REG    at 16#D0# range 00 .. 31;
+         AUX_SPI1_PEEK_REG  at 16#CC# range 00 .. 15;
+
+         AUX_SPI1_IO_REG    at 16#E0# range 00 .. 31;
       end record;
 
 private
