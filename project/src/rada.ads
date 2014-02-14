@@ -540,6 +540,8 @@ package RADA is
          -- Read/Write.
          Data : Word_Array_Type;
       end record;
+   pragma Pack (SPI_Data_Type);
+   for SPI_Data_Type'Size use SIZE_WORD;
 
    --+--------------------------------------------------------------------------
    --| The AUXSPIx_PEEK registers show received data of the SPI interfaces.
@@ -550,6 +552,21 @@ package RADA is
       end record;
    pragma Pack (SPI_Peek_Type);
    for SPI_Peek_Type'Size use SIZE_WORD;
+
+   --+--------------------------------------------------------------------------
+   --| The AUXSPIx_TXHOLD registers are the extended CS port of the SPI
+   --| interfaces. These four addresses all write to the same FIFO.
+   --+--------------------------------------------------------------------------
+   type SPI_TX_Hold_Type is
+      record
+         -- Writes to this address range end up in the transmit FIFO. Data is
+         -- lost when writing whilst the transmit FIFO is full. Reads from this
+         -- address will take the top entry from the receive FIFO. Reading
+         -- whilst the receive FIFO is will return the last data received.
+         Data : Word_Array_Type;
+      end record;
+   pragma Pack (SPI_TX_Hold_Type);
+   for SPI_TX_Hold_Type'Size use SIZE_WORD;
 
    type Auxiliary_Peripherals_Register_Map_Type is
       record
@@ -571,11 +588,13 @@ package RADA is
          AUX_SPI0_STAT_REG  : SPI_Status_Type;
          AUX_SPI0_PEEK_REG  : SPI_Peek_Type;
          AUX_SPI0_IO_REG    : SPI_Data_Type;
+         AUX_SPI0_TXHOLD    : SPI_TX_Hold_Type;
          AUX_SPI1_CNTL0_REG : SPI_Control_Register_0_Type;
          AUX_SPI1_CNTL1_REG : SPI_Control_Register_1_Type;
          AUX_SPI1_STAT_REG  : SPI_Status_Type;
          AUX_SPI1_PEEK_REG  : SPI_Peek_Type;
          AUX_SPI1_IO_REG    : SPI_Data_Type;
+         AUX_SPI1_TXHOLD    : SPI_TX_Hold_Type;
       end record;
 
    for Auxiliary_Peripherals_Register_Map_Type use
@@ -597,13 +616,15 @@ package RADA is
          AUX_SPI0_CNTL1_REG at 16#84# range 00 .. 10;
          AUX_SPI0_STAT_REG  at 16#88# range 00 .. 31;
          AUX_SPI0_PEEK_REG  at 16#8C# range 00 .. 15;
-         AUX_SPI0_IO_REG    at 16#A0# range 00 .. 31;
+         AUX_SPI0_IO_REG    at 16#A0# range 00 .. 15;
+         AUX_SPI0_TXHOLD    at 16#B0# range 00 .. 15;
          AUX_SPI1_CNTL0_REG at 16#C0# range 00 .. 31;
          AUX_SPI1_CNTL1_REG at 16#C4# range 00 .. 10;
          AUX_SPI1_STAT_REG  at 16#C8# range 00 .. 31;
          AUX_SPI1_PEEK_REG  at 16#CC# range 00 .. 15;
+         AUX_SPI1_IO_REG    at 16#E0# range 00 .. 15;
+         AUX_SPI1_TXHOLD    at 16#F0# range 00 .. 15;
 
-         AUX_SPI1_IO_REG    at 16#E0# range 00 .. 31;
       end record;
 
 private
