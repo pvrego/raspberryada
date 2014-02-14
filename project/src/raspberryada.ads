@@ -1,7 +1,7 @@
 with Interfaces;
 with System;
 
-package RADA is
+package RASPBERRYADA is
 
    --+--------------------------------------------------------------------------
    --| Constants
@@ -630,4 +630,4 @@ package RADA is
 private
    Auxiliary_Peripherals_Register_Map : Auxiliary_Peripherals_Register_Map_Type;
    for Auxiliary_Peripherals_Register_Map'Address use System'To_Address (16#7E21_5000#);
-end RADA;
+end RASPBERRYADA;
