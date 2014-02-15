@@ -45,8 +45,11 @@ package RASPBERRYADA is
    --| Spare Types
    --+--------------------------------------------------------------------------
 
-   type Spare_Bit_Type is range 0 .. 0;
+   type Spare_Bit_Type is private;
    type Spare_Type is array (Natural range <>) of Spare_Bit_Type;
+
+private
+   type Spare_Bit_Type is range 0 .. 0;
    for Spare_Type'Component_Size use 1;
 
 end RASPBERRYADA;
