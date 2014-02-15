@@ -20,22 +20,6 @@ package RASPBERRYADA is
    type Bit_Array_Type is array (Natural range <>) of Boolean;
    for Bit_Array_Type'Component_Size use 1;
 
-   type Bit_Array_2_Type is array (0 .. 1) of Boolean;
-   pragma Pack (Bit_Array_2_Type);
-   for Bit_Array_2_Type'Size use 2;
-
-   type Bit_Array_4_Type is array (0 .. 3) of Boolean;
-   pragma Pack (Bit_Array_4_Type);
-   for Bit_Array_4_Type'Size use 4;
-
-   type Bit_Array_6_Type is array (0 .. 5) of Boolean;
-   pragma Pack (Bit_Array_6_Type);
-   for Bit_Array_6_Type'Size use 6;
-
-   type Bit_Array_12_Type is array (0 .. 11) of Boolean;
-   pragma Pack (Bit_Array_12_Type);
-   for Bit_Array_12_Type'Size use 12;
-
    --+--------------------------------------------------------------------------
    --| Spare Types
    --+--------------------------------------------------------------------------

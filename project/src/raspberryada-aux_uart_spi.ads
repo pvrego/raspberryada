@@ -125,13 +125,13 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- On write:
          -- * Writing with bit 1 set will clear the receive FIFO.
          -- * Writing with bit 2 set will clear the transmit FIFO
-         Read_Interrupt_Id_Or_Write_FIFO_Clear_Bits : Bit_Array_2_Type;
+         Read_Interrupt_Id_Or_Write_FIFO_Clear_Bits : Bit_Array_Type (1 .. 2);
          -- Always read as zero as the mini UART has no timeout function. Read.
          Spare_3 : Spare_Type (3 .. 3);
          -- Always read as zero. Read.
          Spare_4_5 : Spare_Type (4 .. 5);
          -- Both bits always read as 1 as the FIFOs are always enabled. Read.
-         FIFO_Enables : Bit_Array_2_Type;
+         FIFO_Enables : Bit_Array_Type (6 .. 7);
       end record;
    pragma Pack (Mini_Uart_Interrupt_Identify_Type);
    for Mini_Uart_Interrupt_Identify_Type'Size use SIZE_BYTE;
@@ -268,7 +268,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- * 10 : De-assert RTS when the receive FIFO has 1 empty space left.
          -- * 11 : De-assert RTS when the receive FIFO has 4 empty spaces left.
          -- Read/Write.
-         RTS_Auto_Flow_Level : Bit_Array_2_Type;
+         RTS_Auto_Flow_Level : Bit_Array_Type (4 .. 5);
          -- This bit allows one to invert the RTS auto flow operation polarity.
          -- If set the RTS auto flow assert level is low. If clear the RTS auto
          -- flow assert level is high. Read/Write.
@@ -323,12 +323,12 @@ package RASPBERRYADA.AUX_UART_SPI is
          Spare_10_15 : Spare_Type (10 .. 15);
          -- These bits shows how many symbols are stored in the receive FIFO.
          -- The value is in the range 0-8. Read.
-         Receive_FIFO_Fill_Level : Bit_Array_4_Type;
+         Receive_FIFO_Fill_Level : Bit_Array_Type (16 .. 19);
          -- Reserved, write zero, read as don't care.
          Spare_20_23 : Spare_Type (20 .. 23);
          -- These bits shows how many symbols are stored in the transmit FIFO.
          -- The value is in the range 0-8. Read.
-         Transmit_FIFO_Fill_Level : Bit_Array_4_Type;
+         Transmit_FIFO_Fill_Level : Bit_Array_Type (24 .. 27);
       end record;
    pragma Pack (Mini_Uart_Extra_Status_Type);
    for Mini_Uart_Extra_Status_Type'Size use SIZE_DWORD;
@@ -353,7 +353,7 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- Specifies the number of bits to shift. This field is ignored when
          -- using 'variable shift' mode. Read/Write.
-         Shift_Length : Bit_Array_6_Type;
+         Shift_Length : Bit_Array_Type (0 .. 5);
          -- If 1 the data is shifted out starting with the MS bit (bit 15 or
          -- bit 11). If 0 the data is shifted out starting with the LS bit
          -- (bit 0). Read/Write.
@@ -381,7 +381,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- * 10 : 4 system clocks extra hold time
          -- * 11 : 7 system clocks extra hold time
          -- Read/Write.
-         DOUT_Hold_Time : Bit_Array_2_Type;
+         DOUT_Hold_Time : Bit_Array_Type (12 .. 13);
          -- If 1 the SPI takes the shift length and the data from the TX fifo.
          -- If 0 the SPI takes the shift length from bits 0-5 of this register.
          -- Read/Write.
@@ -394,10 +394,10 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- If set the SPI input works in post input mode.
          Post_Input_Mode : Boolean;
          -- The pattern output on the CS pins when active. Read/Write.
-         Chip_Selects : Bit_Array_2_Type;
+         Chip_Selects : Bit_Array_Type (17 .. 19);
          -- Sets the SPI clock speed. spi clk freq =
          -- system_clock_freq/2*(speed+1). Read/Write.
-         Speed : Bit_Array_12_Type;
+         Speed : Bit_Array_Type (20 .. 31);
       end record;
    pragma Pack (SPI_Control_Register_0_Type);
    for SPI_Control_Register_0_Type'Size use SIZE_DWORD;
@@ -436,7 +436,7 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- The number of bits still to be processed. Starts with 'shift-length'
          -- and counts down. Read/Write.
-         Bit_Count : Bit_Array_6_Type;
+         Bit_Count : Bit_Array_Type (0 .. 5);
          -- Indicates the module is busy transferring data. Read/Write.
          Busy : Boolean;
          -- If 1 the receiver FIFO is empty. If 0 the receiver FIFO holds at
