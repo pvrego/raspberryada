@@ -169,7 +169,7 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- Reserved, write zero, read as don't care. This bit has a function
          -- in a 16550 compatible UART but is ignored here;
-         Spare_0 : Spare_Bit_Type := (others => 0);
+         Spare_0 : Spare_Type (0 .. 0) := (others => 0);
          -- If clear the UART1_RTS line is high. If set the UART1_RTS line is
          -- low. This bit is ignored if the RTS is used for auto-flow control.
          -- See the Mini Uart Extra Control register description.
@@ -205,7 +205,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Transmitter_Idle : Boolean;
          -- Reserved, write zero, read as don't care. This bit has a function
          -- in a 16550 compatible UART but is ignored here.
-         Spare_7 : Spare_Bit_Type := (others => 0);
+         Spare_7 : Spare_Type (7 .. 7) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Line_Status_Type);
    for Mini_Uart_Line_Status_Type'Size use SIZE_BYTE;
