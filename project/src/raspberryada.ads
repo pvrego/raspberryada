@@ -45,31 +45,8 @@ package RASPBERRYADA is
    --| Spare Types
    --+--------------------------------------------------------------------------
 
-   type Spare_Bit_Type is new Boolean;
-   for Spare_Bit_Type'Size use 1;
-
-   type Spare_2_Bit_Array_Type is array (0 .. 1) of Spare_Bit_Type;
-   pragma Pack (Spare_2_Bit_Array_Type);
-   for Spare_2_Bit_Array_Type'Size use 2;
-
-   type Spare_3_Bit_Array_Type is array (0 .. 2) of Spare_Bit_Type;
-   pragma Pack (Spare_3_Bit_Array_Type);
-   for Spare_3_Bit_Array_Type'Size use 3;
-
-   type Spare_4_Bit_Array_Type is array (0 .. 3) of Spare_Bit_Type;
-   pragma Pack (Spare_4_Bit_Array_Type);
-   for Spare_4_Bit_Array_Type'Size use 4;
-
-   type Spare_5_Bit_Array_Type is array (0 .. 4) of Spare_Bit_Type;
-   pragma Pack (Spare_5_Bit_Array_Type);
-   for Spare_5_Bit_Array_Type'Size use 5;
-
-   type Spare_6_Bit_Array_Type is array (0 .. 5) of Spare_Bit_Type;
-   pragma Pack (Spare_6_Bit_Array_Type);
-   for Spare_6_Bit_Array_Type'Size use 6;
-
-   type Spare_7_Bit_Array_Type is array (0 .. 6) of Spare_Bit_Type;
-   pragma Pack (Spare_7_Bit_Array_Type);
-   for Spare_7_Bit_Array_Type'Size use 7;
+   type Spare_Bit_Type is range 0 .. 0;
+   type Spare_Type is array (Natural range <>) of Spare_Bit_Type;
+   for Spare_Type'Component_Size use 1;
 
 end RASPBERRYADA;

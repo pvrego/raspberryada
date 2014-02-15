@@ -127,9 +127,9 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- * Writing with bit 2 set will clear the transmit FIFO
          Read_Interrupt_Id_Or_Write_FIFO_Clear_Bits : Bit_Array_2_Type;
          -- Always read as zero as the mini UART has no timeout function. Read.
-         Spare_3 : Spare_Bit_Type;
+         Spare_3 : Spare_Type (3 .. 3);
          -- Always read as zero. Read.
-         Spare_4_5 : Spare_2_Bit_Array_Type;
+         Spare_4_5 : Spare_Type (4 .. 5);
          -- Both bits always read as 1 as the FIFOs are always enabled. Read.
          FIFO_Enables : Bit_Array_2_Type;
       end record;
@@ -150,7 +150,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Use_8_Bit_Mode : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare : Spare_4_Bit_Array_Type;
+         Spare_2_To_5 : Spare_Type (2 .. 5);
          -- If set high the UART1_TX line is pulled low continuously. If held
          -- for at least 12 bits times that will indicate a break condition.
          -- Read/Write.
@@ -176,7 +176,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          RTS : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_2_7 : Spare_5_Bit_Array_Type;
+         Spare_2_7 : Spare_Type (2 .. 7);
       end record;
    pragma Pack (Mini_Uart_Modem_Control_Type);
    for Mini_Uart_Modem_Control_Type'Size use SIZE_BYTE;
@@ -196,7 +196,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Receiver_Outrun : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_2_4 : Spare_3_Bit_Array_Type;
+         Spare_2_4 : Spare_Type (2 .. 4);
          -- This bit is set if the transmit FIFO can accept at least one byte.
          -- Read.
          Transmitter_Empty : Boolean;
@@ -217,14 +217,14 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_0_3 : Spare_4_Bit_Array_Type;
+         Spare_0_3 : Spare_Type (0 .. 3);
          -- This bit is the inverse of the UART1_CTS input. Thus:
          -- * If set the UART1_CTS pin is low
          -- * If clear the UART1_CTS pin is high
          CTS_Status : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_6_7 : Spare_2_Bit_Array_Type;
+         Spare_6_7 : Spare_Type (6 .. 7);
       end record;
    pragma Pack (Mini_Uart_Modem_Status_Type);
 
@@ -320,12 +320,12 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- empty. It is a logic AND of bits 2 and 8. Read.
          Transmitter_Done : Boolean;
          -- Reserved, write zero, read as don't care.
-         Spare_10_15 : Spare_6_Bit_Array_Type;
+         Spare_10_15 : Spare_Type (10 .. 15);
          -- These bits shows how many symbols are stored in the receive FIFO.
          -- The value is in the range 0-8. Read.
          Receive_FIFO_Fill_Level : Bit_Array_4_Type;
          -- Reserved, write zero, read as don't care.
-         Spare_20_23 : Spare_4_Bit_Array_Type;
+         Spare_20_23 : Spare_Type (20 .. 23);
          -- These bits shows how many symbols are stored in the transmit FIFO.
          -- The value is in the range 0-8. Read.
          Transmit_FIFO_Fill_Level : Bit_Array_4_Type;
@@ -416,7 +416,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- Read/Write.
          Shift_In_MS_First : Boolean;
          -- Reserved, write zero, read as don't care.
-         Spare_2_5 : Spare_4_Bit_Array_Type;
+         Spare_2_5 : Spare_Type (2 .. 5);
          -- If 1 the interrupt line is high when the interface is idle.
          -- Read/Write.
          Done_IRQ : Boolean;
@@ -449,7 +449,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- least 1 data unit. Read/Write.
          TX_Full : Boolean;
          -- Reserved, write zero, read as don't care.
-         Spare_10_15 : Spare_6_Bit_Array_Type;
+         Spare_10_15 : Spare_Type (10 .. 15);
          -- The number of data units in the receive data FIFO. Read/Write.
          RX_FIFO_Level : Interfaces.Unsigned_8;
          -- The number of data units in the transmit data FIFO. Read/Write.
