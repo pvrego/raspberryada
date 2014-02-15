@@ -41,12 +41,6 @@ package RASPBERRYADA is
    pragma Pack (Bit_Array_12_Type);
    for Bit_Array_12_Type'Size use 12;
 
-   type Unsigned_6 is mod 2 ** 6;
-   for Unsigned_6'Size use 6;
-
-   type Unsigned_12 is mod 2 ** 12;
-   for Unsigned_12'Size use 12;
-
    --+--------------------------------------------------------------------------
    --| Spare Types
    --+--------------------------------------------------------------------------

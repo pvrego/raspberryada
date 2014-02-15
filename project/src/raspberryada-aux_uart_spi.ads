@@ -76,6 +76,38 @@ package RASPBERRYADA.AUX_UART_SPI is
    for Mini_Uart_IO_Data_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
+   --| The AUX_MU_IER_REG register is primary used to enable interrupts.
+   --| If the DLAB bit in the line control register is set this register gives
+   --| access to the MS 8 bits of the baud rate.
+   --| Note: there is easier access to the baud rate register.
+   --|
+   --| It can be interpreted in one of the following meanings:
+   --| * MS_8_bits_Baudrate_RW_DLAB_Eq_1 : Byte_Array_Type
+   --|   - Access to the MS 8 bits of the 16-bit baudrate register. Only if bit
+   --|     7 of the line control register (DLAB bit) is set. Read/Write.
+   --|
+   --| * Enable_Interrupts : Byte_Array_Type
+   --|   - Bit_0 : Enable_Rx_Interrupt_DLAB_Eq_0 : Boolean
+   --|             If this bit is set the interrupt line is asserted whenever
+   --|             the receive FIFO holds at least 1 byte. If this bit is clear
+   --|             no receive interrupts are generated. Read/Write.
+   --|   - Bit_1 : Enable_Tx_Interrupt_DLAB_Eq_0 : Boolean
+   --|             If this bit is set the interrupt line is asserted whenever
+   --|             the transmit FIFO is empty. If this bit is clear no transmit
+   --|             interrupts are generated. Read/Write.
+   --|   - Bits_2_To_3 : Reserved, but required in order to receive inputs.
+   --|   - Bits_4_To_7 : Reserved, write zero, read as don't care. Some of these
+   --|                   bits have functions in a 16550 compatible UART but are
+   --|                   ignored here. Read/Write.
+   --+--------------------------------------------------------------------------
+   type Mini_Uart_Interrupt_Enable_Type is
+      record
+         Data : Byte_Array_Type;
+      end record;
+   pragma Pack (Mini_Uart_Interrupt_Enable_Type);
+   for Mini_Uart_Interrupt_Enable_Type'Size use SIZE_BYTE;
+
+   --+--------------------------------------------------------------------------
    --| The AUX_MU_IIR_REG register shows the interrupt status. It also has two
    --| FIFO enable status bits and (when w riting) FIFO clear bits.
    --+--------------------------------------------------------------------------
@@ -105,37 +137,6 @@ package RASPBERRYADA.AUX_UART_SPI is
    for Mini_Uart_Interrupt_Identify_Type'Size use SIZE_BYTE;
 
    --+--------------------------------------------------------------------------
-   --| The AUX_MU_IER_REG register is primary used to enable interrupts.
-   --| If the DLAB bit in the line control register is set this register gives
-   --| access to the MS 8 bits of the baud rate.
-   --| Note: there is easier access to the baud rate register.
-   --|
-   --| It can be interpreted in one of the following meanings:
-   --| * MS_8_bits_Baudrate_RW_DLAB_Eq_1 : Byte_Array_Type
-   --|   - Access to the MS 8 bits of the 16-bit baudrate register. Only if bit
-   --|     7 of the line control register (DLAB bit) is set. Read/Write.
-   --|
-   --| * Enable_Interrupts : Byte_Array_Type
-   --|   - Bit_0 : Enable_Tx_Interrupt_DLAB_Eq_0 : Boolean
-   --|             If this bit is set the interrupt line is asserted whenever
-   --|             the transmit FIFO is empty. If this bit is clear no transmit
-   --|             interrupts are generated. Read.
-   --|   - Bit_1 : Enable_Rx_Interrupt_DLAB_Eq_0 : Boolean
-   --|             If this bit is set the interrupt line is asserted whenever
-   --|             the receive FIFO holds at least 1 byte. If this bit is clear
-   --|             no receive interrupts are generated.
-   --|   - Bits_2_To_7 : Reserved, write zero, read as don't care. Some of these
-   --|                   bits have functions in a 16550 compatible UART but are
-   --|                   ignored here.
-   --+--------------------------------------------------------------------------
-   type Mini_Uart_Interrupt_Enable_Type is
-      record
-         Data : Byte_Array_Type;
-      end record;
-   pragma Pack (Mini_Uart_Interrupt_Enable_Type);
-   for Mini_Uart_Interrupt_Enable_Type'Size use SIZE_BYTE;
-
-   --+--------------------------------------------------------------------------
    --| The AUX_MU_LCR_REG register controls the line data format and gives
    --| access to the baudrate register.
    --+--------------------------------------------------------------------------
@@ -144,9 +145,12 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- If clear the UART works in 7-bit mode. If set the UART works in
          -- 8-bit mode. Read/Write.
          Data_Size : Boolean;
+         -- Bit 1 must be se for 8-bit mode, like a 16550 write a 3 to get
+         -- 8-bit mode. Read.
+         Use_8_Bit_Mode : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare : Spare_5_Bit_Array_Type;
+         Spare : Spare_4_Bit_Array_Type;
          -- If set high the UART1_TX line is pulled low continuously. If held
          -- for at least 12 bits times that will indicate a break condition.
          -- Read/Write.
@@ -430,26 +434,24 @@ package RASPBERRYADA.AUX_UART_SPI is
    --+--------------------------------------------------------------------------
    type SPI_Status_Type is
       record
-         -- If Bit 6 (Busy) is high, it means:
-         -- * Bits 0:5 : Bit_Count : The number of bits still to be processed.
-         --   Starts with 'shift-length' and counts down. Read/Write.
-         -- * Bit 6 : Busy : Indicates the module is busy transferring data.
-         --   Read/Write.
-         -- * Bits 7:11 : Reserved, write zero, read as don't care.
-         --
-         -- If Bit 6 is low (not busy), it means:
-         -- * Bit 2 : RX_Empty : If 1 the receiver FIFO is empty. If 0 the
-         --   receiver FIFO holds at least 1 data unit. Read/Write.
-         -- * Bit 3 : TX_Empty : If 1 the transmit FIFO is empty. If 0 the
-         --   transmit FIFO holds at least 1 data unit. Read/Write.
-         -- * Bit 4 : TX_Full : If 1 the transmit FIFO is full. If 0 the
-         --   transmit FIFO can accept at least 1 data unit. Read/Write.
-         -- * Bit 6 : Busy : Indicates the module is busy transferring data.
-         --   Read/Write.
-         -- * Bits 5,7:11: Reserved, write zero, read as don't care.
-         Bit_Count_Or_Status : Bit_Array_12_Type;
+         -- The number of bits still to be processed. Starts with 'shift-length'
+         -- and counts down. Read/Write.
+         Bit_Count : Bit_Array_6_Type;
+         -- Indicates the module is busy transferring data. Read/Write.
+         Busy : Boolean;
+         -- If 1 the receiver FIFO is empty. If 0 the receiver FIFO holds at
+         -- least 1 data unit. Read/Write.
+         RX_Empty : Boolean;
+         -- If 1 the transmit FIFO is empty. If 0 the transmit FIFO holds at
+         -- least 1 data unit. Read/Write.
+         TX_Empty : Boolean;
+         -- If 1 the transmit FIFO is full. If 0 the transmit FIFO can accept at
+         -- least 1 data unit. Read/Write.
+         TX_Full : Boolean;
+         -- Reserved, write zero, read as don't care.
+         Spare_10_15 : Spare_6_Bit_Array_Type;
          -- The number of data units in the receive data FIFO. Read/Write.
-         RX_FIFO_Level : Unsigned_12;
+         RX_FIFO_Level : Interfaces.Unsigned_8;
          -- The number of data units in the transmit data FIFO. Read/Write.
          TX_FIFO_Level : Interfaces.Unsigned_8;
       end record;
@@ -502,8 +504,8 @@ package RASPBERRYADA.AUX_UART_SPI is
          AUX_IRQ            : Auxiliary_Interrupt_Status_Type;
          AUX_ENABLES        : Auxiliary_Enables_Type;
          AUX_MU_IO_REG      : Mini_Uart_IO_Data_Type;
-         AUX_MU_IIR_REG     : Mini_Uart_Interrupt_Identify_Type;
          AUX_MU_IER_REG     : Mini_Uart_Interrupt_Enable_Type;
+         AUX_MU_IIR_REG     : Mini_Uart_Interrupt_Identify_Type;
          AUX_MU_LCR_REG     : Mini_Uart_Line_Control_Type;
          AUX_MU_MCR_REG     : Mini_Uart_Modem_Control_Type;
          AUX_MU_LSR_REG     : Mini_Uart_Line_Status_Type;
@@ -531,8 +533,8 @@ package RASPBERRYADA.AUX_UART_SPI is
          AUX_IRQ            at 16#00# range 00 .. 02;
          AUX_ENABLES        at 16#04# range 00 .. 02;
          AUX_MU_IO_REG      at 16#40# range 00 .. 07;
-         AUX_MU_IIR_REG     at 16#44# range 00 .. 07;
-         AUX_MU_IER_REG     at 16#48# range 00 .. 07;
+         AUX_MU_IER_REG     at 16#44# range 00 .. 07;
+         AUX_MU_IIR_REG     at 16#48# range 00 .. 07;
          AUX_MU_LCR_REG     at 16#4C# range 00 .. 07;
          AUX_MU_MCR_REG     at 16#50# range 00 .. 07;
          AUX_MU_LSR_REG     at 16#54# range 00 .. 07;
