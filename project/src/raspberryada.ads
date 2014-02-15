@@ -17,13 +17,8 @@ package RASPBERRYADA is
    type Byte_Type is new Interfaces.Unsigned_8;
    for Byte_Type'Size use SIZE_BYTE;
 
-   type Byte_Array_Type is array (0 .. 7) of Boolean;
-   pragma Pack (Byte_Array_Type);
-   for Byte_Array_Type'Size use SIZE_BYTE;
-
-   type Word_Array_Type is array (0 .. 15) of Boolean;
-   pragma Pack (Word_Array_Type);
-   for Word_Array_Type'Size use SIZE_WORD;
+   type Bit_Array_Type is array (Natural range <>) of Boolean;
+   for Bit_Array_Type'Component_Size use 1;
 
    type Bit_Array_2_Type is array (0 .. 1) of Boolean;
    pragma Pack (Bit_Array_2_Type);

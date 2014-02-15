@@ -70,7 +70,7 @@ package RASPBERRYADA.AUX_UART_SPI is
    --+--------------------------------------------------------------------------
    type Mini_Uart_IO_Data_Type is
       record
-         Data : Byte_Array_Type;
+         Data : Bit_Array_Type (0 .. 7);
       end record;
    pragma Pack (Mini_Uart_IO_Data_Type);
    for Mini_Uart_IO_Data_Type'Size use SIZE_BYTE;
@@ -102,7 +102,7 @@ package RASPBERRYADA.AUX_UART_SPI is
    --+--------------------------------------------------------------------------
    type Mini_Uart_Interrupt_Enable_Type is
       record
-         Data : Byte_Array_Type;
+         Data : Bit_Array_Type (0 .. 7);
       end record;
    pragma Pack (Mini_Uart_Interrupt_Enable_Type);
    for Mini_Uart_Interrupt_Enable_Type'Size use SIZE_BYTE;
@@ -235,7 +235,7 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- One whole byte extra on top of the 134217728 provided by the SDC.
          -- Read/Write.
-         Scratch : Byte_Array_Type;
+         Scratch : Bit_Array_Type (0 .. 7);
       end record;
    pragma Pack (Mini_Uart_Scratch_Type);
    for Mini_Uart_Scratch_Type'Size use SIZE_BYTE;
@@ -341,7 +341,7 @@ package RASPBERRYADA.AUX_UART_SPI is
    type Mini_Uart_Baud_Rate is
       record
          -- Mini UART baudrate counter. Read/Write.
-         Baud_Rate : Word_Array_Type;
+         Baud_Rate : Bit_Array_Type (0 .. 15);
       end record;
    pragma Pack (Mini_Uart_Baud_Rate);
    for Mini_Uart_Baud_Rate'Size use SIZE_WORD;
@@ -469,7 +469,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- address will take the top entry from the receive FIFO. Reading
          -- whilst the receive FIFO is will return the last data received.
          -- Read/Write.
-         Data : Word_Array_Type;
+         Data : Bit_Array_Type (0 .. 15);
       end record;
    pragma Pack (SPI_Data_Type);
    for SPI_Data_Type'Size use SIZE_WORD;
@@ -479,7 +479,7 @@ package RASPBERRYADA.AUX_UART_SPI is
    --+--------------------------------------------------------------------------
    type SPI_Peek_Type is
       record
-         Data : Word_Array_Type;
+         Data : Bit_Array_Type (0 .. 15);
       end record;
    pragma Pack (SPI_Peek_Type);
    for SPI_Peek_Type'Size use SIZE_WORD;
@@ -494,7 +494,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- lost when writing whilst the transmit FIFO is full. Reads from this
          -- address will take the top entry from the receive FIFO. Reading
          -- whilst the receive FIFO is will return the last data received.
-         Data : Word_Array_Type;
+         Data : Bit_Array_Type (0 .. 15);
       end record;
    pragma Pack (SPI_TX_Hold_Type);
    for SPI_TX_Hold_Type'Size use SIZE_WORD;
