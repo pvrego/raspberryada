@@ -20,9 +20,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          SPI_1_IRQ     : Boolean;
          -- If set the SPI 2 module has an interrupt pending. Read.
          SPI_2_IRQ     : Boolean;
+         -- Reserved, write zero, read as don't care.
+         Spare_3_31    : Spare_Type (3 .. 31) := (others => 0);
       end record;
    pragma Pack (Auxiliary_Interrupt_Status_Type);
-   for Auxiliary_Interrupt_Status_Type'Size use 3;
+   for Auxiliary_Interrupt_Status_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUXENB register is used to enable the three modules; UART,SPI1, SPI2.
@@ -42,9 +44,10 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- disabled. That also disables any SPI 2 module register access.
          -- Read/Write.
          SPI_2_Enable     : Boolean;
+         Spare_3_31       : Spare_Type (3 .. 31) := (others => 0);
       end record;
    pragma Pack (Auxiliary_Enables_Type);
-   for Auxiliary_Enables_Type'Size use 3;
+   for Auxiliary_Enables_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_IO_REG register is primary used to write data to and read data
@@ -71,9 +74,11 @@ package RASPBERRYADA.AUX_UART_SPI is
    type Mini_Uart_IO_Data_Type is
       record
          Data : Bit_Array_Type (0 .. 7);
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_IO_Data_Type);
-   for Mini_Uart_IO_Data_Type'Size use SIZE_BYTE;
+   for Mini_Uart_IO_Data_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_IER_REG register is primary used to enable interrupts.
@@ -103,9 +108,11 @@ package RASPBERRYADA.AUX_UART_SPI is
    type Mini_Uart_Interrupt_Enable_Type is
       record
          Data : Bit_Array_Type (0 .. 7);
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Interrupt_Enable_Type);
-   for Mini_Uart_Interrupt_Enable_Type'Size use SIZE_BYTE;
+   for Mini_Uart_Interrupt_Enable_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_IIR_REG register shows the interrupt status. It also has two
@@ -132,9 +139,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          Spare_4_5 : Spare_Type (4 .. 5);
          -- Both bits always read as 1 as the FIFOs are always enabled. Read.
          FIFO_Enables : Bit_Array_Type (6 .. 7);
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Interrupt_Identify_Type);
-   for Mini_Uart_Interrupt_Identify_Type'Size use SIZE_BYTE;
+   for Mini_Uart_Interrupt_Identify_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_LCR_REG register controls the line data format and gives
@@ -158,9 +167,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- If set the first to Mini UART register give access the the Baudrate
          -- register. During operation this bit must be cleared.
          DLAB_Access : Boolean;
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Line_Control_Type);
-   for Mini_Uart_Line_Control_Type'Size use SIZE_BYTE;
+   for Mini_Uart_Line_Control_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_MCR_REG register controls the 'modem' signals.
@@ -177,9 +188,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
          Spare_2_7 : Spare_Type (2 .. 7) := (others => 0);
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Modem_Control_Type);
-   for Mini_Uart_Modem_Control_Type'Size use SIZE_BYTE;
+   for Mini_Uart_Modem_Control_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_LSR_REG register shows the data status.
@@ -206,9 +219,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- Reserved, write zero, read as don't care. This bit has a function
          -- in a 16550 compatible UART but is ignored here.
          Spare_7 : Spare_Type (7 .. 7) := (others => 0);
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Line_Status_Type);
-   for Mini_Uart_Line_Status_Type'Size use SIZE_BYTE;
+   for Mini_Uart_Line_Status_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_MSR_REG register shows the 'modem' status.
@@ -225,8 +240,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
          Spare_6_7 : Spare_Type (6 .. 7) := (others => 0);
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Modem_Status_Type);
+   for Mini_Uart_Modem_Status_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_SCRATCH is a single byte storage.
@@ -236,9 +254,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- One whole byte extra on top of the 134217728 provided by the SDC.
          -- Read/Write.
          Scratch : Bit_Array_Type (0 .. 7);
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Scratch_Type);
-   for Mini_Uart_Scratch_Type'Size use SIZE_BYTE;
+   for Mini_Uart_Scratch_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_CNTL_REG provides access to some extra useful and nice
@@ -277,9 +297,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- If set the CTS auto flow assert level is low. If clear the CTS auto
          -- flow assert level is high.
          CTS_Assert_Level : Boolean;
+         -- Reserved, write zero, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Extra_Control_Type);
-   for Mini_Uart_Extra_Control_Type'Size use SIZE_BYTE;
+   for Mini_Uart_Extra_Control_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUX_MU_STAT_REG provides a lot of useful information about the
@@ -342,9 +364,11 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- Mini UART baudrate counter. Read/Write.
          Baud_Rate : Bit_Array_Type (0 .. 15);
+         -- Reserved, write zero, read as don't care
+         Spare_16_31 : Spare_Type (16 .. 31) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Baud_Rate);
-   for Mini_Uart_Baud_Rate'Size use SIZE_WORD;
+   for Mini_Uart_Baud_Rate'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUXSPIx_CNTL0 register control many features of the SPI interfaces.
@@ -425,9 +449,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          TX_Empty_IRQ : Boolean;
          -- Additional SPI clock cycles where the CS is high. Read/Write.
          CS_High_Time : Boolean;
+         -- Reserved, write zero, read as don't care
+         Spare_11_31 : Spare_Type (11 .. 31) := (others => 0);
       end record;
    pragma Pack (SPI_Control_Register_1_Type);
-   for SPI_Control_Register_1_Type'Size use 11;
+   for SPI_Control_Register_1_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUXSPIx_STAT registers show the status of the SPI interfaces.
@@ -470,9 +496,11 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- whilst the receive FIFO is will return the last data received.
          -- Read/Write.
          Data : Bit_Array_Type (0 .. 15);
+         -- Reserved, write zero, read as don't care
+         Spare_16_31 : Spare_Type (16 .. 31) := (others => 0);
       end record;
    pragma Pack (SPI_Data_Type);
-   for SPI_Data_Type'Size use SIZE_WORD;
+   for SPI_Data_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUXSPIx_PEEK registers show received data of the SPI interfaces.
@@ -480,9 +508,11 @@ package RASPBERRYADA.AUX_UART_SPI is
    type SPI_Peek_Type is
       record
          Data : Bit_Array_Type (0 .. 15);
+         -- Reserved, write zero, read as don't care
+         Spare_16_31 : Spare_Type (16 .. 31) := (others => 0);
       end record;
    pragma Pack (SPI_Peek_Type);
-   for SPI_Peek_Type'Size use SIZE_WORD;
+   for SPI_Peek_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The AUXSPIx_TXHOLD registers are the extended CS port of the SPI
@@ -495,14 +525,17 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- address will take the top entry from the receive FIFO. Reading
          -- whilst the receive FIFO is will return the last data received.
          Data : Bit_Array_Type (0 .. 15);
+         -- Reserved, write zero, read as don't care
+         Spare_16_31 : Spare_Type (16 .. 31) := (others => 0);
       end record;
    pragma Pack (SPI_TX_Hold_Type);
-   for SPI_TX_Hold_Type'Size use SIZE_WORD;
+   for SPI_TX_Hold_Type'Size use SIZE_DWORD;
 
    type Auxiliary_Peripherals_Register_Map_Type is
       record
          AUX_IRQ            : Auxiliary_Interrupt_Status_Type;
          AUX_ENABLES        : Auxiliary_Enables_Type;
+         Spare_16x05        : Spare_Dword_Array_Type (0 .. 13);
          AUX_MU_IO_REG      : Mini_Uart_IO_Data_Type;
          AUX_MU_IER_REG     : Mini_Uart_Interrupt_Enable_Type;
          AUX_MU_IIR_REG     : Mini_Uart_Interrupt_Identify_Type;
@@ -514,52 +547,66 @@ package RASPBERRYADA.AUX_UART_SPI is
          AUX_MU_CNTL_REG    : Mini_Uart_Extra_Control_Type;
          AUX_MU_STAT_REG    : Mini_Uart_Extra_Status_Type;
          AUX_MU_BAUD_REG    : Mini_Uart_Baud_Rate;
+         Spare_16x6C        : Spare_Dword_Array_Type (0 .. 4);
          AUX_SPI0_CNTL0_REG : SPI_Control_Register_0_Type;
          AUX_SPI0_CNTL1_REG : SPI_Control_Register_1_Type;
          AUX_SPI0_STAT_REG  : SPI_Status_Type;
          AUX_SPI0_PEEK_REG  : SPI_Peek_Type;
+         Spare_16x90        : Spare_Dword_Array_Type (0 .. 3);
          AUX_SPI0_IO_REG    : SPI_Data_Type;
+         Spare_16xA4        : Spare_Dword_Array_Type (0 .. 2);
          AUX_SPI0_TXHOLD    : SPI_TX_Hold_Type;
+         Spare_16xB4        : Spare_Dword_Array_Type (0 .. 2);
          AUX_SPI1_CNTL0_REG : SPI_Control_Register_0_Type;
          AUX_SPI1_CNTL1_REG : SPI_Control_Register_1_Type;
          AUX_SPI1_STAT_REG  : SPI_Status_Type;
          AUX_SPI1_PEEK_REG  : SPI_Peek_Type;
+         Spare_16xD0        : Spare_Dword_Array_Type (0 .. 3);
          AUX_SPI1_IO_REG    : SPI_Data_Type;
+         Spare_16xE4        : Spare_Dword_Array_Type (0 .. 2);
          AUX_SPI1_TXHOLD    : SPI_TX_Hold_Type;
       end record;
 
    for Auxiliary_Peripherals_Register_Map_Type use
       record
-         AUX_IRQ            at 16#00# range 00 .. 02;
-         AUX_ENABLES        at 16#04# range 00 .. 02;
-         AUX_MU_IO_REG      at 16#40# range 00 .. 07;
-         AUX_MU_IER_REG     at 16#44# range 00 .. 07;
-         AUX_MU_IIR_REG     at 16#48# range 00 .. 07;
-         AUX_MU_LCR_REG     at 16#4C# range 00 .. 07;
-         AUX_MU_MCR_REG     at 16#50# range 00 .. 07;
-         AUX_MU_LSR_REG     at 16#54# range 00 .. 07;
-         AUX_MU_MSR_REG     at 16#58# range 00 .. 07;
-         AUX_MU_SCRATCH     at 16#5C# range 00 .. 07;
-         AUX_MU_CNTL_REG    at 16#60# range 00 .. 07;
-         AUX_MU_STAT_REG    at 16#64# range 00 .. 31;
-         AUX_MU_BAUD_REG    at 16#68# range 00 .. 15;
-         AUX_SPI0_CNTL0_REG at 16#80# range 00 .. 31;
-         AUX_SPI0_CNTL1_REG at 16#84# range 00 .. 10;
-         AUX_SPI0_STAT_REG  at 16#88# range 00 .. 31;
-         AUX_SPI0_PEEK_REG  at 16#8C# range 00 .. 15;
-         AUX_SPI0_IO_REG    at 16#A0# range 00 .. 15;
-         AUX_SPI0_TXHOLD    at 16#B0# range 00 .. 15;
-         AUX_SPI1_CNTL0_REG at 16#C0# range 00 .. 31;
-         AUX_SPI1_CNTL1_REG at 16#C4# range 00 .. 10;
-         AUX_SPI1_STAT_REG  at 16#C8# range 00 .. 31;
-         AUX_SPI1_PEEK_REG  at 16#CC# range 00 .. 15;
-         AUX_SPI1_IO_REG    at 16#E0# range 00 .. 15;
-         AUX_SPI1_TXHOLD    at 16#F0# range 00 .. 15;
-
+         AUX_IRQ            at 16#00# range 00 .. SIZE_DWORD - 1;
+         AUX_ENABLES        at 16#04# range 00 .. SIZE_DWORD - 1;
+         Spare_16x05        at 16#08# range 00 .. 14 * SIZE_DWORD - 1;
+         AUX_MU_IO_REG      at 16#40# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_IER_REG     at 16#44# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_IIR_REG     at 16#48# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_LCR_REG     at 16#4C# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_MCR_REG     at 16#50# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_LSR_REG     at 16#54# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_MSR_REG     at 16#58# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_SCRATCH     at 16#5C# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_CNTL_REG    at 16#60# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_STAT_REG    at 16#64# range 00 .. SIZE_DWORD - 1;
+         AUX_MU_BAUD_REG    at 16#68# range 00 .. SIZE_DWORD - 1;
+         Spare_16x6C        at 16#6C# range 00 .. 5 * SIZE_DWORD - 1;
+         AUX_SPI0_CNTL0_REG at 16#80# range 00 .. SIZE_DWORD - 1;
+         AUX_SPI0_CNTL1_REG at 16#84# range 00 .. SIZE_DWORD - 1;
+         AUX_SPI0_STAT_REG  at 16#88# range 00 .. SIZE_DWORD - 1;
+         AUX_SPI0_PEEK_REG  at 16#8C# range 00 .. SIZE_DWORD - 1;
+         Spare_16x90        at 16#90# range 00 .. 4 * SIZE_DWORD - 1;
+         AUX_SPI0_IO_REG    at 16#A0# range 00 .. SIZE_DWORD - 1;
+         Spare_16xA4        at 16#A4# range 00 .. 3 * SIZE_DWORD - 1;
+         AUX_SPI0_TXHOLD    at 16#B0# range 00 .. SIZE_DWORD - 1;
+         Spare_16xB4        at 16#B4# range 00 .. 3 * SIZE_DWORD - 1;
+         AUX_SPI1_CNTL0_REG at 16#C0# range 00 .. SIZE_DWORD - 1;
+         AUX_SPI1_CNTL1_REG at 16#C4# range 00 .. SIZE_DWORD - 1;
+         AUX_SPI1_STAT_REG  at 16#C8# range 00 .. SIZE_DWORD - 1;
+         AUX_SPI1_PEEK_REG  at 16#CC# range 00 .. SIZE_DWORD - 1;
+         Spare_16xD0        at 16#D0# range 00 .. 4 * SIZE_DWORD - 1;
+         AUX_SPI1_IO_REG    at 16#E0# range 00 .. SIZE_DWORD - 1;
+         Spare_16xE4        at 16#E4# range 00 .. 3 * SIZE_DWORD - 1;
+         AUX_SPI1_TXHOLD    at 16#F0# range 00 .. SIZE_DWORD - 1;
       end record;
 
 private
+
    Auxiliary_Peripherals_Register_Map : Auxiliary_Peripherals_Register_Map_Type;
-   for Auxiliary_Peripherals_Register_Map'Address use System'To_Address (16#7E21_5000#);
+   for Auxiliary_Peripherals_Register_Map'Address use
+     System'To_Address (16#7E21_5000#);
 
 end RASPBERRYADA.AUX_UART_SPI;

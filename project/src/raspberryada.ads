@@ -29,4 +29,8 @@ package RASPBERRYADA is
    type Spare_Type is array (Natural range <>) of Spare_Bit_Type;
    for Spare_Type'Component_Size use 1;
 
+   type Spare_Dword_Array_Type is array
+     (Natural range <>) of Spare_Type (0 .. SIZE_DWORD - 1);
+   for Spare_Dword_Array_Type'Component_Size use SIZE_DWORD;
+
 end RASPBERRYADA;
