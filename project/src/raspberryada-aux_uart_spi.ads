@@ -82,7 +82,7 @@ package RASPBERRYADA.AUX_UART_SPI is
    --| Note: there is easier access to the baud rate register.
    --|
    --| It can be interpreted in one of the following meanings:
-   --| * MS_8_bits_Baudrate_RW_DLAB_Eq_1 : Byte_Array_Type
+   --| * MS_8_bits_Baudrate_RW_DLAB_Eq_1 : Byte_Array_Type (0 .. 7)
    --|   - Access to the MS 8 bits of the 16-bit baudrate register. Only if bit
    --|     7 of the line control register (DLAB bit) is set. Read/Write.
    --|
@@ -150,7 +150,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Use_8_Bit_Mode : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_2_To_5 : Spare_Type (2 .. 5);
+         Spare_2_To_5 : Spare_Type (2 .. 5) := (others => 0);
          -- If set high the UART1_TX line is pulled low continuously. If held
          -- for at least 12 bits times that will indicate a break condition.
          -- Read/Write.
@@ -169,14 +169,14 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- Reserved, write zero, read as don't care. This bit has a function
          -- in a 16550 compatible UART but is ignored here;
-         Spare_0 : Spare_Bit_Type;
+         Spare_0 : Spare_Bit_Type := (others => 0);
          -- If clear the UART1_RTS line is high. If set the UART1_RTS line is
          -- low. This bit is ignored if the RTS is used for auto-flow control.
          -- See the Mini Uart Extra Control register description.
          RTS : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_2_7 : Spare_Type (2 .. 7);
+         Spare_2_7 : Spare_Type (2 .. 7) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Modem_Control_Type);
    for Mini_Uart_Modem_Control_Type'Size use SIZE_BYTE;
@@ -196,7 +196,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Receiver_Outrun : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_2_4 : Spare_Type (2 .. 4);
+         Spare_2_4 : Spare_Type (2 .. 4) := (others => 0);
          -- This bit is set if the transmit FIFO can accept at least one byte.
          -- Read.
          Transmitter_Empty : Boolean;
@@ -205,7 +205,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Transmitter_Idle : Boolean;
          -- Reserved, write zero, read as don't care. This bit has a function
          -- in a 16550 compatible UART but is ignored here.
-         Spare_7 : Spare_Bit_Type;
+         Spare_7 : Spare_Bit_Type := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Line_Status_Type);
    for Mini_Uart_Line_Status_Type'Size use SIZE_BYTE;
@@ -217,14 +217,14 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_0_3 : Spare_Type (0 .. 3);
+         Spare_0_3 : Spare_Type (0 .. 3) := (others => 0);
          -- This bit is the inverse of the UART1_CTS input. Thus:
          -- * If set the UART1_CTS pin is low
          -- * If clear the UART1_CTS pin is high
          CTS_Status : Boolean;
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_6_7 : Spare_Type (6 .. 7);
+         Spare_6_7 : Spare_Type (6 .. 7) := (others => 0);
       end record;
    pragma Pack (Mini_Uart_Modem_Status_Type);
 
@@ -320,12 +320,12 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- empty. It is a logic AND of bits 2 and 8. Read.
          Transmitter_Done : Boolean;
          -- Reserved, write zero, read as don't care.
-         Spare_10_15 : Spare_Type (10 .. 15);
+         Spare_10_15 : Spare_Type (10 .. 15) := (others => 0);
          -- These bits shows how many symbols are stored in the receive FIFO.
          -- The value is in the range 0-8. Read.
          Receive_FIFO_Fill_Level : Bit_Array_Type (16 .. 19);
          -- Reserved, write zero, read as don't care.
-         Spare_20_23 : Spare_Type (20 .. 23);
+         Spare_20_23 : Spare_Type (20 .. 23) := (others => 0);
          -- These bits shows how many symbols are stored in the transmit FIFO.
          -- The value is in the range 0-8. Read.
          Transmit_FIFO_Fill_Level : Bit_Array_Type (24 .. 27);
@@ -416,7 +416,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- Read/Write.
          Shift_In_MS_First : Boolean;
          -- Reserved, write zero, read as don't care.
-         Spare_2_5 : Spare_Type (2 .. 5);
+         Spare_2_5 : Spare_Type (2 .. 5) := (others => 0);
          -- If 1 the interrupt line is high when the interface is idle.
          -- Read/Write.
          Done_IRQ : Boolean;
@@ -449,7 +449,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          -- least 1 data unit. Read/Write.
          TX_Full : Boolean;
          -- Reserved, write zero, read as don't care.
-         Spare_10_15 : Spare_Type (10 .. 15);
+         Spare_10_15 : Spare_Type (10 .. 15) := (others => 0);
          -- The number of data units in the receive data FIFO. Read/Write.
          RX_FIFO_Level : Interfaces.Unsigned_8;
          -- The number of data units in the transmit data FIFO. Read/Write.
