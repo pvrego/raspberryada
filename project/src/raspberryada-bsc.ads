@@ -366,4 +366,16 @@ package RASPBERRYADA.BSC is
          Clock_Strech_Timeout : Clock_Stretch_Timeout_Register_Type;
       end record;
 
+   for I2C_Address_Map_Type use
+      record
+         Control              at 16#00# range 00 .. SIZE_DWORD - 1;
+         Status               at 16#04# range 00 .. SIZE_DWORD - 1;
+         Data_Length          at 16#08# range 00 .. SIZE_DWORD - 1;
+         Slave_Address        at 16#0C# range 00 .. SIZE_DWORD - 1;
+         Data_FIFO            at 16#10# range 00 .. SIZE_DWORD - 1;
+         Clock_Divider        at 16#14# range 00 .. SIZE_DWORD - 1;
+         Data_Delay           at 16#18# range 00 .. SIZE_DWORD - 1;
+         Clock_Strech_Timeout at 16#1C# range 00 .. SIZE_DWORD - 1;
+      end record;
+
 end RASPBERRYADA.BSC;
