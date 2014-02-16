@@ -16,8 +16,8 @@ And finally we add the file `related\BCM2835-ARM-Peripherals-Fixed.pdf` with the
 Each block is a chapter of the BCM2835 datasheet. 
 
 - Auxiliaries: UART1 & SPI1, SPI2 : Implemented.
-- **BSC : Under development**.
-- DMA Controller : Future development.
+- BSC : Implemented.
+- **DMA Controller : Under development**.
 - External Mass Media Controller : Future development.
 - General Purpose I/O (GPIO) : Future development.
 - Interrupts : Future development.
