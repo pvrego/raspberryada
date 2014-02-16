@@ -37,13 +37,6 @@ package RASPBERRYADA.BSC is
    --+--------------------------------------------------------------------------
    --| The control register is used to enable interrupts, clear the FIFO, define
    --| a read or write operation and start a transfer.
-   --| 1)
-   --| 2)
-   --| 3)
-   --| 4)
-   --| 5)
-   --| 6)
-   --| 7)
    --+--------------------------------------------------------------------------
    type Control_Type is
       record
