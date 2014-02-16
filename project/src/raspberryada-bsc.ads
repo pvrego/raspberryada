@@ -354,7 +354,7 @@ package RASPBERRYADA.BSC is
    pragma Pack (Clock_Stretch_Timeout_Register_Type);
    for Clock_Stretch_Timeout_Register_Type'Size use SIZE_DWORD;
 
-   type I2C_Address_Map_Type is
+   type I2C_Register_Map_Type is
       record
          Control              : Control_Register_Type;
          Status               : Status_Register_Type;
@@ -366,7 +366,7 @@ package RASPBERRYADA.BSC is
          Clock_Strech_Timeout : Clock_Stretch_Timeout_Register_Type;
       end record;
 
-   for I2C_Address_Map_Type use
+   for I2C_Register_Map_Type use
       record
          Control              at 16#00# range 00 .. SIZE_DWORD - 1;
          Status               at 16#04# range 00 .. SIZE_DWORD - 1;
@@ -377,5 +377,18 @@ package RASPBERRYADA.BSC is
          Data_Delay           at 16#18# range 00 .. SIZE_DWORD - 1;
          Clock_Strech_Timeout at 16#1C# range 00 .. SIZE_DWORD - 1;
       end record;
+
+private
+
+   BSC0_Register_Map : I2C_Register_Map_Type := (others => <>);
+   for BSC0_Register_Map'Address use System'To_Address (16#7E20_5000#);
+
+   BSC1_Register_Map : I2C_Register_Map_Type := (others => <>);
+   for BSC1_Register_Map'Address use System'To_Address (16#7E80_4000#);
+
+   -- Note that the BSC2 master is used dedicated with the  HDMI interface and
+   -- should not be accessed by user programs.
+   BSC2_Register_Map : I2C_Register_Map_Type := (others => <>);
+   for BSC2_Register_Map'Address use System'To_Address (16#7E80_5000#);
 
 end RASPBERRYADA.BSC;
