@@ -277,7 +277,7 @@ package RASPBERRYADA.BSC is
    type Data_FIFO_Register_Type is
       record
          -- Writes to the register write transmit data to the FIFO. Reads from
-         -- register reads received data from the FIFO.
+         -- register reads received data from the FIFO. Read/Write.
          Data : Bit_Array_Type (0 .. 7);
 
          -- Reserved - Write as 0, read as don't care
@@ -296,7 +296,7 @@ package RASPBERRYADA.BSC is
          -- SCL = core clock / CDIV. Where core_clk is nominally 150 MHz. If
          -- CDIV is set to 0, the divisor is 32768. CDIV is always rounded down
          -- to an even number. The default value should result in a 100 kHz I2C
-         -- clock frequency.
+         -- clock frequency. Read/Write.
          Clock_Divider : Bit_Array_Type (0 .. 15);
 
          -- Reserved - Write as 0, read as don't care
@@ -304,6 +304,31 @@ package RASPBERRYADA.BSC is
       end record;
    pragma Pack (Clock_Divider_Register_Type);
    for Clock_Divider_Register_Type'Size use SIZE_DWORD;
+
+   --+--------------------------------------------------------------------------
+   --| The data delay register provides fine control over the sampling/launch
+   --| point of the data.
+   --| - The REDL field specifies the number core clocks to wait after the
+   --|   rising edge before sampling the incoming data.
+   --| - The FEDL field specifies the number core clocks to wait after the
+   --|   falling edge before outputting the next data bit.
+   --| Note: Care must be taken in choosing values for FEDL and REDL as it is
+   --| possible to cause the BSC master to malfunction by setting values of
+   --| CDIV/2 or greater. Therefore the delay values should always be set to
+   --| less than CDIV/2.
+   --+--------------------------------------------------------------------------
+   type Data_Delay_Register_Type is
+      record
+         -- Number of core clock cycles to wait after the rising edge of SCL
+         -- before reading the next bit of data. Read/Write.
+         REDL_Rising_Edge_Delay : Bit_Array_Type (0 .. 15);
+
+         -- Number of core clock cycles to wait after the falling edge of SCL
+         -- before outputting next bit of data. Read/Write.
+         FEDL_Falling_Edge_Delay : Bit_Array_Type (16 .. 31);
+      end record;
+   pragma Pack (Data_Delay_Register_Type);
+   for Data_Delay_Register_Type'Size use SIZE_DWORD;
 
    type I2C_Address_Map_Type is
       record
