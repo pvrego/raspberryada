@@ -250,6 +250,22 @@ package RASPBERRYADA.BSC is
    pragma Pack (Data_Length_Register_Type);
    for Data_Length_Register_Type'Size use SIZE_DWORD;
 
+   --+--------------------------------------------------------------------------
+   --| The slave address register specifies the slave address and cycle type.
+   --| The address register can be left across multiple transfers. The ADDR
+   --| field specifies the slave address of the I2C device.
+   --+--------------------------------------------------------------------------
+   type Slave_Address_Register_Type is
+      record
+         -- Slave Address. Read/Write.
+         Address : Bit_Array_Type (0 .. 6);
+
+         -- Reserved - Write as 0, read as don't care.
+         Spare_7_31 : Spare_Type (7 .. 31);
+      end record;
+   pragma Pack (Slave_Address_Register_Type);
+   for Slave_Address_Register_Type'Size use SIZE_DWORD;
+
    type I2C_Address_Map_Type is
       record
          Control              : Control_Register_Type;
