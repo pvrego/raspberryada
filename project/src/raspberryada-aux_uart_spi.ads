@@ -22,7 +22,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          SPI_2_IRQ     : Boolean;
 
          -- Reserved, write zero, read as don't care.
-         Spare_3_31    : Spare_Type (3 .. 31) := (others => 0);
+         Spare_3_31    : Spare_Type (3 .. 31);
       end record;
    pragma Pack (Auxiliary_Interrupt_Status_Type);
    for Auxiliary_Interrupt_Status_Type'Size use SIZE_DWORD;
@@ -49,7 +49,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          SPI_2_Enable     : Boolean;
 
          -- Reserved, write zero, read as don't care.
-         Spare_3_31       : Spare_Type (3 .. 31) := (others => 0);
+         Spare_3_31       : Spare_Type (3 .. 31);
       end record;
    pragma Pack (Auxiliary_Enables_Type);
    for Auxiliary_Enables_Type'Size use SIZE_DWORD;
@@ -81,7 +81,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Data : Bit_Array_Type (0 .. 7);
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_IO_Data_Type);
    for Mini_Uart_IO_Data_Type'Size use SIZE_DWORD;
@@ -116,7 +116,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Data : Bit_Array_Type (0 .. 7);
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_Interrupt_Enable_Type);
    for Mini_Uart_Interrupt_Enable_Type'Size use SIZE_DWORD;
@@ -152,7 +152,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          FIFO_Enables : Bit_Array_Type (6 .. 7);
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_Interrupt_Identify_Type);
    for Mini_Uart_Interrupt_Identify_Type'Size use SIZE_DWORD;
@@ -173,7 +173,7 @@ package RASPBERRYADA.AUX_UART_SPI is
 
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_2_To_5 : Spare_Type (2 .. 5) := (others => 0);
+         Spare_2_To_5 : Spare_Type (2 .. 5);
 
          -- If set high the UART1_TX line is pulled low continuously. If held
          -- for at least 12 bits times that will indicate a break condition.
@@ -185,7 +185,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          DLAB_Access : Boolean;
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_Line_Control_Type);
    for Mini_Uart_Line_Control_Type'Size use SIZE_DWORD;
@@ -197,7 +197,7 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- Reserved, write zero, read as don't care. This bit has a function
          -- in a 16550 compatible UART but is ignored here;
-         Spare_0 : Spare_Type (0 .. 0) := (others => 0);
+         Spare_0 : Spare_Type (0 .. 0);
 
          -- If clear the UART1_RTS line is high. If set the UART1_RTS line is
          -- low. This bit is ignored if the RTS is used for auto-flow control.
@@ -206,10 +206,10 @@ package RASPBERRYADA.AUX_UART_SPI is
 
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_2_7 : Spare_Type (2 .. 7) := (others => 0);
+         Spare_2_7 : Spare_Type (2 .. 7);
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_Modem_Control_Type);
    for Mini_Uart_Modem_Control_Type'Size use SIZE_DWORD;
@@ -231,7 +231,7 @@ package RASPBERRYADA.AUX_UART_SPI is
 
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_2_4 : Spare_Type (2 .. 4) := (others => 0);
+         Spare_2_4 : Spare_Type (2 .. 4);
 
          -- This bit is set if the transmit FIFO can accept at least one byte.
          -- Read.
@@ -243,10 +243,10 @@ package RASPBERRYADA.AUX_UART_SPI is
 
          -- Reserved, write zero, read as don't care. This bit has a function
          -- in a 16550 compatible UART but is ignored here.
-         Spare_7 : Spare_Type (7 .. 7) := (others => 0);
+         Spare_7 : Spare_Type (7 .. 7);
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_Line_Status_Type);
    for Mini_Uart_Line_Status_Type'Size use SIZE_DWORD;
@@ -258,7 +258,7 @@ package RASPBERRYADA.AUX_UART_SPI is
       record
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_0_3 : Spare_Type (0 .. 3) := (others => 0);
+         Spare_0_3 : Spare_Type (0 .. 3);
 
          -- This bit is the inverse of the UART1_CTS input. Thus:
          -- * If set the UART1_CTS pin is low
@@ -267,10 +267,10 @@ package RASPBERRYADA.AUX_UART_SPI is
 
          -- Reserved, write zero, read as don't care. Some of these bits have
          -- functions in a 16550 compatible UART but are ignored here.
-         Spare_6_7 : Spare_Type (6 .. 7) := (others => 0);
+         Spare_6_7 : Spare_Type (6 .. 7);
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_Modem_Status_Type);
    for Mini_Uart_Modem_Status_Type'Size use SIZE_DWORD;
@@ -285,7 +285,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Scratch : Bit_Array_Type (0 .. 7);
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_Scratch_Type);
    for Mini_Uart_Scratch_Type'Size use SIZE_DWORD;
@@ -335,7 +335,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          CTS_Assert_Level : Boolean;
 
          -- Reserved, write zero, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => 0);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Mini_Uart_Extra_Control_Type);
    for Mini_Uart_Extra_Control_Type'Size use SIZE_DWORD;
@@ -389,14 +389,14 @@ package RASPBERRYADA.AUX_UART_SPI is
          Transmitter_Done : Boolean;
 
          -- Reserved, write zero, read as don't care.
-         Spare_10_15 : Spare_Type (10 .. 15) := (others => 0);
+         Spare_10_15 : Spare_Type (10 .. 15);
 
          -- These bits shows how many symbols are stored in the receive FIFO.
          -- The value is in the range 0-8. Read.
          Receive_FIFO_Fill_Level : Bit_Array_Type (16 .. 19);
 
          -- Reserved, write zero, read as don't care.
-         Spare_20_23 : Spare_Type (20 .. 23) := (others => 0);
+         Spare_20_23 : Spare_Type (20 .. 23);
 
          -- These bits shows how many symbols are stored in the transmit FIFO.
          -- The value is in the range 0-8. Read.
@@ -416,7 +416,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Baud_Rate : Bit_Array_Type (0 .. 15);
 
          -- Reserved, write zero, read as don't care
-         Spare_16_31 : Spare_Type (16 .. 31) := (others => 0);
+         Spare_16_31 : Spare_Type (16 .. 31);
       end record;
    pragma Pack (Mini_Uart_Baud_Rate);
    for Mini_Uart_Baud_Rate'Size use SIZE_DWORD;
@@ -505,7 +505,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Shift_In_MS_First : Boolean;
 
          -- Reserved, write zero, read as don't care.
-         Spare_2_5 : Spare_Type (2 .. 5) := (others => 0);
+         Spare_2_5 : Spare_Type (2 .. 5);
 
          -- If 1 the interrupt line is high when the interface is idle.
          -- Read/Write.
@@ -519,7 +519,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          CS_High_Time : Boolean;
 
          -- Reserved, write zero, read as don't care
-         Spare_11_31 : Spare_Type (11 .. 31) := (others => 0);
+         Spare_11_31 : Spare_Type (11 .. 31);
       end record;
    pragma Pack (SPI_Control_Register_1_Type);
    for SPI_Control_Register_1_Type'Size use SIZE_DWORD;
@@ -549,7 +549,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          TX_Full : Boolean;
 
          -- Reserved, write zero, read as don't care.
-         Spare_10_15 : Spare_Type (10 .. 15) := (others => 0);
+         Spare_10_15 : Spare_Type (10 .. 15);
 
          -- The number of data units in the receive data FIFO. Read/Write.
          RX_FIFO_Level : Interfaces.Unsigned_8;
@@ -574,7 +574,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Data : Bit_Array_Type (0 .. 15);
 
          -- Reserved, write zero, read as don't care
-         Spare_16_31 : Spare_Type (16 .. 31) := (others => 0);
+         Spare_16_31 : Spare_Type (16 .. 31);
       end record;
    pragma Pack (SPI_Data_Type);
    for SPI_Data_Type'Size use SIZE_DWORD;
@@ -587,7 +587,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Data : Bit_Array_Type (0 .. 15);
 
          -- Reserved, write zero, read as don't care
-         Spare_16_31 : Spare_Type (16 .. 31) := (others => 0);
+         Spare_16_31 : Spare_Type (16 .. 31);
       end record;
    pragma Pack (SPI_Peek_Type);
    for SPI_Peek_Type'Size use SIZE_DWORD;
@@ -605,7 +605,7 @@ package RASPBERRYADA.AUX_UART_SPI is
          Data : Bit_Array_Type (0 .. 15);
 
          -- Reserved, write zero, read as don't care
-         Spare_16_31 : Spare_Type (16 .. 31) := (others => 0);
+         Spare_16_31 : Spare_Type (16 .. 31);
       end record;
    pragma Pack (SPI_TX_Hold_Type);
    for SPI_TX_Hold_Type'Size use SIZE_DWORD;
@@ -684,8 +684,7 @@ package RASPBERRYADA.AUX_UART_SPI is
 
 private
 
-   Auxiliary_Peripherals_Register_Map : Auxiliary_Peripherals_Register_Map_Type
-     := (others => <>);
+   Auxiliary_Peripherals_Register_Map : Auxiliary_Peripherals_Register_Map_Type;
 
    for Auxiliary_Peripherals_Register_Map'Address use
      System'To_Address (16#7E21_5000#);

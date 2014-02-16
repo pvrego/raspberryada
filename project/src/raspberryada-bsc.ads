@@ -46,7 +46,7 @@ package RASPBERRYADA.BSC is
          Read_Transfer : Boolean;
 
          -- Reserved - Write as 0, read as don't care
-         Spare_1_3 : Spare_Type (1 .. 3) := (others => 0);
+         Spare_1_3 : Spare_Type (1 .. 3);
 
          -- The CLEAR field is used to clear the FIFO. Writing to this field is
          -- a one-shot operation which will always read back as zero. The CLEAR
@@ -63,7 +63,7 @@ package RASPBERRYADA.BSC is
          FIFO_Clear : Bit_Array_Type (4 .. 5);
 
          -- Reserved - Write as 0, read as don't care
-         Spare_6 : Spare_Type (6 .. 6) := (others => 0);
+         Spare_6 : Spare_Type (6 .. 6);
 
          -- The ST field starts a new BSC transfer. This has a one shot action,
          -- and so the bit will always read back as 0.
@@ -245,7 +245,7 @@ package RASPBERRYADA.BSC is
          Value : Bit_Array_Type (0 .. 15);
 
          -- Reserved - Write as 0, read as don't care
-         Spare_16_31 : Spare_Type (16 .. 31) := (others => <>);
+         Spare_16_31 : Spare_Type (16 .. 31);
       end record;
    pragma Pack (Data_Length_Register_Type);
    for Data_Length_Register_Type'Size use SIZE_DWORD;
@@ -261,7 +261,7 @@ package RASPBERRYADA.BSC is
          Value : Bit_Array_Type (0 .. 6);
 
          -- Reserved - Write as 0, read as don't care.
-         Spare_7_31 : Spare_Type (7 .. 31) := (others => <>);
+         Spare_7_31 : Spare_Type (7 .. 31);
       end record;
    pragma Pack (Slave_Address_Register_Type);
    for Slave_Address_Register_Type'Size use SIZE_DWORD;
@@ -281,7 +281,7 @@ package RASPBERRYADA.BSC is
          Data : Bit_Array_Type (0 .. 7);
 
          -- Reserved - Write as 0, read as don't care
-         Spare_8_31 : Spare_Type (8 .. 31) := (others => <>);
+         Spare_8_31 : Spare_Type (8 .. 31);
       end record;
    pragma Pack (Data_FIFO_Register_Type);
    for Data_FIFO_Register_Type'Size use SIZE_DWORD;
@@ -300,7 +300,7 @@ package RASPBERRYADA.BSC is
          Clock_Divider : Bit_Array_Type (0 .. 15);
 
          -- Reserved - Write as 0, read as don't care
-         Spare_16_31 : Spare_Type (16 .. 31) := (others => <>);
+         Spare_16_31 : Spare_Type (16 .. 31);
       end record;
    pragma Pack (Clock_Divider_Register_Type);
    for Clock_Divider_Register_Type'Size use SIZE_DWORD;
@@ -349,7 +349,7 @@ package RASPBERRYADA.BSC is
          Value : Bit_Array_Type (0 .. 15);
 
          -- Reserved - Write as 0, read as don't care
-         Spare_16_31 : Spare_Type (16 .. 31) := (others => <>);
+         Spare_16_31 : Spare_Type (16 .. 31);
       end record;
    pragma Pack (Clock_Stretch_Timeout_Register_Type);
    for Clock_Stretch_Timeout_Register_Type'Size use SIZE_DWORD;
@@ -380,15 +380,15 @@ package RASPBERRYADA.BSC is
 
 private
 
-   BSC0_Register_Map : I2C_Register_Map_Type := (others => <>);
+   BSC0_Register_Map : I2C_Register_Map_Type;
    for BSC0_Register_Map'Address use System'To_Address (16#7E20_5000#);
 
-   BSC1_Register_Map : I2C_Register_Map_Type := (others => <>);
+   BSC1_Register_Map : I2C_Register_Map_Type;
    for BSC1_Register_Map'Address use System'To_Address (16#7E80_4000#);
 
    -- Note that the BSC2 master is used dedicated with the  HDMI interface and
    -- should not be accessed by user programs.
-   BSC2_Register_Map : I2C_Register_Map_Type := (others => <>);
+   BSC2_Register_Map : I2C_Register_Map_Type;
    for BSC2_Register_Map'Address use System'To_Address (16#7E80_5000#);
 
 end RASPBERRYADA.BSC;
