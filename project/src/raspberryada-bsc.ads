@@ -38,7 +38,7 @@ package RASPBERRYADA.BSC is
    --| The control register is used to enable interrupts, clear the FIFO, define
    --| a read or write operation and start a transfer.
    --+--------------------------------------------------------------------------
-   type Control_Type is
+   type Control_Register_Type is
       record
          -- The READ field specifies the type of transfer.
          -- - 0 = Write Packet Transfer.
@@ -109,14 +109,14 @@ package RASPBERRYADA.BSC is
          -- Read/Write.
          E2C_Enable : Boolean;
       end record;
-   pragma Pack (Control_Type);
-   for Control_Type'Size use SIZE_DWORD;
+   pragma Pack (Control_Register_Type);
+   for Control_Register_Type'Size use SIZE_DWORD;
 
    --+--------------------------------------------------------------------------
    --| The status register is used to record activity status, errors and
    --| interrupt requests.
    --+--------------------------------------------------------------------------
-   type Status_Type is
+   type Status_Register_Type is
       record
          -- The TA field indicates the activity status of the BSC controller.
          -- This read-only field returns a 1 when the controller is in the
@@ -219,19 +219,19 @@ package RASPBERRYADA.BSC is
          -- Read/Write.
          CLKT_Clock_Strech_Timeout : Boolean;
       end record;
-   pragma Pack (Status_Type);
-   for Status_Type'Size use SIZE_DWORD;
+   pragma Pack (Status_Register_Type);
+   for Status_Register_Type'Size use SIZE_DWORD;
 
    type I2C_Address_Map_Type is
       record
-         Control              : Control_Type;
-         Status               : Status_Type;
-         Data_Lenght          : Data_Length_Type;
-         Slave_Address        : Slave_Address_Type;
-         Data_FIFO            : Data_Fifo_Type;
-         Clock_Divider        : Clock_Divider_Type;
-         Data_Delay           : Data_Delay_Type;
-         Clock_Strech_Timeout : Clock_Strech_Timeout_Type;
+         Control              : Control_Register_Type;
+         Status               : Status_Register_Type;
+         Data_Lenght          : Data_Length_Register_Type;
+         Slave_Address        : Slave_Address_Register_Type;
+         Data_FIFO            : Data_Fifo_Register_Type;
+         Clock_Divider        : Clock_Divider_Register_Type;
+         Data_Delay           : Data_Delay_Register_Type;
+         Clock_Strech_Timeout : Clock_Strech_Timeout_Register_Type;
       end record;
 
 end RASPBERRYADA.BSC;
