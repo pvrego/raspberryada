@@ -39,7 +39,8 @@ Each block is a chapter of the BCM2835 datasheet.
 	|   |-- src
 	|   |   |-- main.adb
 	|   |   |-- raspberryada.ads
-	|   |   `-- raspberryada-aux_uart_spi.ads
+	|   |   |-- raspberryada-aux_uart_spi.ads
+	|   |   `-- raspberryada-bsc.ads
 	|   |-- obj
 	|   `-- raspberryada.gpr
 	|-- related
