@@ -1,5 +1,3 @@
-with System;
-
 --+-----------------------------------------------------------------------------
 --| The  Device  has  three  Auxiliary  peripherals:  One  mini  UART  and  two
 --| SPI  masters. These three peripheral are grouped together as they share the
