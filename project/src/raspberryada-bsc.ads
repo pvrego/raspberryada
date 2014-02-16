@@ -226,7 +226,7 @@ package RASPBERRYADA.BSC is
       record
          Control              : Control_Register_Type;
          Status               : Status_Register_Type;
-         Data_Lenght          : Data_Length_Register_Type;
+         Data_Length          : Data_Length_Register_Type;
          Slave_Address        : Slave_Address_Register_Type;
          Data_FIFO            : Data_Fifo_Register_Type;
          Clock_Divider        : Clock_Divider_Register_Type;
