@@ -245,7 +245,7 @@ package RASPBERRYADA.BSC is
          Data_Length : Bit_Array_Type (0 .. 15);
 
          -- Reserved - Write as 0, read as don't care
-         Spare_16_31 : Spare_Type (16 .. 31);
+         Spare_16_31 : Spare_Type (16 .. 31) := (others => <>);
       end record;
    pragma Pack (Data_Length_Register_Type);
    for Data_Length_Register_Type'Size use SIZE_DWORD;
@@ -261,10 +261,30 @@ package RASPBERRYADA.BSC is
          Address : Bit_Array_Type (0 .. 6);
 
          -- Reserved - Write as 0, read as don't care.
-         Spare_7_31 : Spare_Type (7 .. 31);
+         Spare_7_31 : Spare_Type (7 .. 31) := (others => <>);
       end record;
    pragma Pack (Slave_Address_Register_Type);
    for Slave_Address_Register_Type'Size use SIZE_DWORD;
+
+   --+--------------------------------------------------------------------------
+   --| The Data FIFO register is used to access the FIFO. Write cycles to this
+   --| address place data in the 16-byte FIFO, ready to transmit on the BSC bus.
+   --| Read cycles access data received from the bus. Data writes to a full FIFO
+   --| will be ignored and datareads from an empty FIFO will result in invalid
+   --| data. The FIFO can be cleared using the I2CC.CLEAR field. The DATA field
+   --| specifies the data to be transmitted or received.
+   --+--------------------------------------------------------------------------
+   type Data_FIFO_Register_Type is
+      record
+         -- Writes to the register write transmit data to the FIFO. Reads from
+         -- register reads received data from the FIFO.
+         Data : Bit_Array_Type (0 .. 7);
+
+         -- Reserved - Write as 0, read as don't care
+         Spare_8_31 : Spare_Type (8 .. 31) := (others => <>);
+      end record;
+   pragma Pack (Data_FIFO_Register_Type);
+   for Data_FIFO_Register_Type'Size use SIZE_DWORD;
 
    type I2C_Address_Map_Type is
       record
@@ -272,7 +292,7 @@ package RASPBERRYADA.BSC is
          Status               : Status_Register_Type;
          Data_Length          : Data_Length_Register_Type;
          Slave_Address        : Slave_Address_Register_Type;
-         Data_FIFO            : Data_Fifo_Register_Type;
+         Data_FIFO            : Data_FIFO_Register_Type;
          Clock_Divider        : Clock_Divider_Register_Type;
          Data_Delay           : Data_Delay_Register_Type;
          Clock_Strech_Timeout : Clock_Strech_Timeout_Register_Type;
