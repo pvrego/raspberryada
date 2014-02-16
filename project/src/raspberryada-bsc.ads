@@ -226,17 +226,21 @@ package RASPBERRYADA.BSC is
    --| The data length register defines the number of bytes of data to transmit
    --| or receive in the I2C transfer. Reading the register gives the number of
    --| bytes remaining in the current transfer.
+   --| The DLEN field specifies the number of bytes to be transmitted/received.
+   --| Reading the DLEN field when a transfer is in progress (TA = 1) returns
+   --| the number of bytes still to be transmitted or received. Reading the DLEN
+   --| field when the transfer has just completed (DONE = 1) returns zero as
+   --| there are no more bytes to transmit or receive. Finally, reading the DLEN
+   --| field when TA = 0 and DONE = 0 returns the last value written. The DLEN
+   --| field can be left over multiple transfers.
    --+--------------------------------------------------------------------------
    type Data_Length_Register_Type is
       record
-         -- The DLEN field specifies the number of bytes to be transmitted/
-         -- received. Reading the DLEN field when a transfer is in progress
-         -- (TA = 1) returns the number of bytes still to be transmitted or
-         -- received. Reading the DLEN field when the transfer has just
-         -- completed (DONE = 1) returns zero as there are no more bytes to
-         -- transmit or receive. Finally, reading the DLEN field when TA = 0
-         -- and DONE = 0 returns the last value written. The DLEN field can be
-         -- left over multiple transfers.
+         -- Writing to DLEN specifies the number of bytes to be transmitted/
+         -- received. Reading from DLEN when TA = 1 or DONE = 1, returns the
+         -- number of bytes still to be transmitted or received. Reading from
+         -- DLEN when TA = 0 and DONE  = 0, returns the last DLEN value written.
+         -- DLEN can be left over multiple packets.
          -- Read/Write.
          Data_Length : Bit_Array_Type (0 .. 15);
 
