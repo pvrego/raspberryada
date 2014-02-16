@@ -286,6 +286,25 @@ package RASPBERRYADA.BSC is
    pragma Pack (Data_FIFO_Register_Type);
    for Data_FIFO_Register_Type'Size use SIZE_DWORD;
 
+   --+--------------------------------------------------------------------------
+   --| The clock divider register is used to define the clock speed of the BSC
+   --| peripheral. The CDIV field specifies the core clock divider used by the
+   --| BSC.
+   --+--------------------------------------------------------------------------
+   type Clock_Divider_Register_Type is
+      record
+         -- SCL = core clock / CDIV. Where core_clk is nominally 150 MHz. If
+         -- CDIV is set to 0, the divisor is 32768. CDIV is always rounded down
+         -- to an even number. The default value should result in a 100 kHz I2C
+         -- clock frequency.
+         Clock_Divider : Bit_Array_Type (0 .. 15);
+
+         -- Reserved - Write as 0, read as don't care
+         Spare_16_31 : Spare_Type (16 .. 31) := (others => <>);
+      end record;
+   pragma Pack (Clock_Divider_Register_Type);
+   for Clock_Divider_Register_Type'Size use SIZE_DWORD;
+
    type I2C_Address_Map_Type is
       record
          Control              : Control_Register_Type;
