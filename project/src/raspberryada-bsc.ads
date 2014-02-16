@@ -242,7 +242,7 @@ package RASPBERRYADA.BSC is
          -- DLEN when TA = 0 and DONE  = 0, returns the last DLEN value written.
          -- DLEN can be left over multiple packets.
          -- Read/Write.
-         Data_Length : Bit_Array_Type (0 .. 15);
+         Value : Bit_Array_Type (0 .. 15);
 
          -- Reserved - Write as 0, read as don't care
          Spare_16_31 : Spare_Type (16 .. 31) := (others => <>);
@@ -258,7 +258,7 @@ package RASPBERRYADA.BSC is
    type Slave_Address_Register_Type is
       record
          -- Slave Address. Read/Write.
-         Address : Bit_Array_Type (0 .. 6);
+         Value : Bit_Array_Type (0 .. 6);
 
          -- Reserved - Write as 0, read as don't care.
          Spare_7_31 : Spare_Type (7 .. 31) := (others => <>);
@@ -330,6 +330,30 @@ package RASPBERRYADA.BSC is
    pragma Pack (Data_Delay_Register_Type);
    for Data_Delay_Register_Type'Size use SIZE_DWORD;
 
+   --+--------------------------------------------------------------------------
+   --| The clock stretch timeout register provides a timeout on how long the
+   --| master waits for the slave to stretch the clock before deciding that the
+   --| slave has hung.
+   --| The TOUT field specifies the number I2C SCL clocks to wait after
+   --| releasing SCL high and finding that the SCL is still low before deciding
+   --| that the slave is not responding and moving the I2C machine forward. When
+   --| a timeout occurs,the I2CS.CLKT bit is set.
+   --| Writing 0x0 to TOUT will result in the Clock Stretch Timeout being
+   --| disabled.
+   --+--------------------------------------------------------------------------
+   type Clock_Stretch_Timeout_Register_Type is
+      record
+         -- TOUT Clock Stretch Timeout Value. Number of SCL clock cycles to wait
+         -- after the rising edge of SCL before deciding that the slave is not
+         -- responding. Read/Write.
+         Value : Bit_Array_Type (0 .. 15);
+
+         -- Reserved - Write as 0, read as don't care
+         Spare_16_31 : Spare_Type (16 .. 31) := (others => <>);
+      end record;
+   pragma Pack (Clock_Stretch_Timeout_Register_Type);
+   for Clock_Stretch_Timeout_Register_Type'Size use SIZE_DWORD;
+
    type I2C_Address_Map_Type is
       record
          Control              : Control_Register_Type;
@@ -339,7 +363,7 @@ package RASPBERRYADA.BSC is
          Data_FIFO            : Data_FIFO_Register_Type;
          Clock_Divider        : Clock_Divider_Register_Type;
          Data_Delay           : Data_Delay_Register_Type;
-         Clock_Strech_Timeout : Clock_Strech_Timeout_Register_Type;
+         Clock_Strech_Timeout : Clock_Stretch_Timeout_Register_Type;
       end record;
 
 end RASPBERRYADA.BSC;
