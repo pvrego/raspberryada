@@ -222,6 +222,30 @@ package RASPBERRYADA.BSC is
    pragma Pack (Status_Register_Type);
    for Status_Register_Type'Size use SIZE_DWORD;
 
+   --+--------------------------------------------------------------------------
+   --| The data length register defines the number of bytes of data to transmit
+   --| or receive in the I2C transfer. Reading the register gives the number of
+   --| bytes remaining in the current transfer.
+   --+--------------------------------------------------------------------------
+   type Data_Length_Register_Type is
+      record
+         -- The DLEN field specifies the number of bytes to be transmitted/
+         -- received. Reading the DLEN field when a transfer is in progress
+         -- (TA = 1) returns the number of bytes still to be transmitted or
+         -- received. Reading the DLEN field when the transfer has just
+         -- completed (DONE = 1) returns zero as there are no more bytes to
+         -- transmit or receive. Finally, reading the DLEN field when TA = 0
+         -- and DONE = 0 returns the last value written. The DLEN field can be
+         -- left over multiple transfers.
+         -- Read/Write.
+         Data_Length : Bit_Array_Type (0 .. 15);
+
+         -- Reserved - Write as 0, read as don't care
+         Spare_16_31 : Spare_Type (16 .. 31);
+      end record;
+   pragma Pack (Data_Length_Register_Type);
+   for Data_Length_Register_Type'Size use SIZE_DWORD;
+
    type I2C_Address_Map_Type is
       record
          Control              : Control_Register_Type;
