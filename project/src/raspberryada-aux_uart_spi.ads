@@ -605,7 +605,9 @@ package RASPBERRYADA.AUX_UART_SPI is
 
 private
 
-   Auxiliary_Peripherals_Register_Map : Auxiliary_Peripherals_Register_Map_Type;
+   Auxiliary_Peripherals_Register_Map : Auxiliary_Peripherals_Register_Map_Type
+     := (others => <>);
+
    for Auxiliary_Peripherals_Register_Map'Address use
      System'To_Address (16#7E21_5000#);
 
